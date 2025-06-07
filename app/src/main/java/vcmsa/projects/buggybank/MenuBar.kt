@@ -208,7 +208,21 @@ class MenuBar : AppCompatActivity() {
                         FragCalculator.view?.startAnimation(fadeOut)
                         FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragCalculator)
-                    }
+                  }
+//                    R.id.is_Profile -> {
+//                        val fadeOut = AlphaAnimation(1f, 0f).apply {
+//                            duration = 150
+//                            fillAfter = true
+//                        }
+//                        val fadeIn = AlphaAnimation(0f, 1f).apply {
+//                            duration = 150
+//                            fillAfter = true
+//                            startOffset = 150
+//                        }
+//                        FragCalculator.view?.startAnimation(fadeOut)
+//                        FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
+//                        replaceFrag(FragProfile)
+//                    }
                     R.id.is_currencyConvertor -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
                             duration = 150
