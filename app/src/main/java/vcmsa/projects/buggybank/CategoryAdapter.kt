@@ -7,22 +7,32 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CategoryAdapter(private val categoryList: List<String>) :
-    RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(
+    private val categories: List<Category>,
+    private val onEdit: (Category) -> Unit,
+    private val onDelete: (Category) -> Unit
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val categoryNameTextView: TextView = itemView.findViewById(android.R.id.text1)
+    fun getItemAt(position: Int): Category = categories[position]
+
+    inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val nameTextView: TextView = view.findViewById(R.id.categoryNameTextView1)
+        val editButton: View = view.findViewById(R.id.editButton1)
+        val deleteButton: View = view.findViewById(R.id.deleteButton1)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_category, parent, false)
         return CategoryViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        holder.categoryNameTextView.text = categoryList[position]
+        val category = categories[position]
+        holder.nameTextView.text = "${category.name} (${category.type})"
+        holder.editButton.setOnClickListener { onEdit(category) }
+        holder.deleteButton.setOnClickListener { onDelete(category) }
     }
 
-    override fun getItemCount(): Int = categoryList.size
+    override fun getItemCount(): Int = categories.size
 }
