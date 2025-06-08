@@ -1,7 +1,7 @@
 package vcmsa.projects.buggybank
 
+import android.app.AlertDialog
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,27 +13,70 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
+/**
+ * Fragment for creating a new category.
+ *
+ * This fragment will allow the user to input a name for the category and select whether it is an expense or income.
+ * The category will be saved to the Firebase Realtime Database under the current user's UID.
+ */
 private const val TAG = "CreateCategoryFragment"
 
 class CreateCategoryFragment : Fragment() {
 
+    /**
+     * The database reference for the categories.
+     */
     private lateinit var database: DatabaseReference
+
+    /**
+     * The RecyclerView for displaying the list of categories.
+     */
     private lateinit var categoryRecyclerView: RecyclerView
+
+    /**
+     * The EditText for inputting the name of the category.
+     */
     private lateinit var categoryNameInput: EditText
+
+    /**
+     * The RadioGroup for selecting whether the category is an expense or income.
+     */
     private lateinit var typeRadioGroup: RadioGroup
+
+    /**
+     * The RadioButton for selecting expense.
+     */
     private lateinit var expenseRadioButton: RadioButton
+
+    /**
+     * The RadioButton for selecting income.
+     */
     private lateinit var incomeRadioButton: RadioButton
+
+    /**
+     * The Button for adding the category.
+     */
     private lateinit var addCategoryButton: Button
-    private val categoryList = mutableListOf(
-        "Clothing", "Entertainment", "Food", "Fuel",
-        "Groceries", "Health", "Housing", "Internet", "Insurance"
-    )
+
+    /**
+     * The list of categories.
+     */
+    private val categoryList = mutableListOf<Category>()
+
+
+    /**
+     * The adapter for the RecyclerView.
+     */
     private lateinit var categoryAdapter: CategoryAdapter
 
     override fun onCreateView(
@@ -54,85 +97,78 @@ class CreateCategoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
 
+        // Initialize user-scoped database reference
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         database = FirebaseDatabase.getInstance()
             .getReference("users").child(uid).child("categories")
 
-        categoryAdapter = CategoryAdapter(categoryList)
+        // Setup RecyclerView and Adapter
+        categoryAdapter = CategoryAdapter(categoryList,
+            onEdit = { category -> showEditDialog(category) },
+            onDelete = { category -> deleteCategory(category) }
+        )
+
         categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         categoryRecyclerView.adapter = categoryAdapter
 
-        addCategoryButton.setOnClickListener {
-            addCategory()
-            typeRadioGroup.clearCheck() //clears selection of radio buttons
-        }
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
 
-        // Ensure only one radio button is selected at a time
-        typeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.expenseRadioButton -> Log.d(TAG, "Expense selected")
-                R.id.incomeRadioButton -> Log.d(TAG, "Income selected")
-                else -> Log.d(TAG, "No selection")
-            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val category = categoryAdapter.getItemAt(position)
 
-
-        }
-
-        
-        fun addCategory() {
-            Log.d(TAG, "addCategory")
-            val name = categoryNameInput.text.toString().trim()
-            if (name.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a category name.", Toast.LENGTH_SHORT)
+                // Show confirmation dialog
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Category")
+                    .setMessage("Are you sure you want to delete \"${category.name}\"?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        deleteCategory(category)
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        categoryAdapter.notifyItemChanged(position) // Reset the swiped item
+                    }
                     .show()
-                return
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(categoryRecyclerView)
+
+        // Load categories from Firebase
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                categoryList.clear()
+                for (child in snapshot.children) {
+                    val id = child.key ?: continue
+                    val name = child.child("name").getValue(String::class.java) ?: continue
+                    val type = child.child("type").getValue(String::class.java) ?: continue
+                    categoryList.add(Category(id, name, type))
+                }
+                categoryAdapter.notifyDataSetChanged()
             }
 
-            val type = when {
-                expenseRadioButton.isChecked -> "Expense"
-                incomeRadioButton.isChecked -> "Income"
-                else -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "Please select Expense or Income.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return
-                }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
             }
+        })
 
-            val user = FirebaseAuth.getInstance().currentUser ?: run {
-                Log.e(TAG, "No user logged in")
-                return
-            }
-
-            val categoryData = mapOf("name" to name, "type" to type)
-
-            database.child("categories").push().setValue(categoryData)
-                .addOnSuccessListener {
-                    Log.d(TAG, "Saved under Users/${user.uid}/Category: $categoryData")
-                    Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
-
-                    val display = "$name ($type)"
-                    categoryList.add(display)
-                    categoryAdapter.notifyItemInserted(categoryList.size - 1)
-                    categoryNameInput.text.clear()
-                    typeRadioGroup.clearCheck()
-                }
-                .addOnFailureListener { exception ->
-                    Log.e(TAG, "Error adding category", exception)
-                    Toast.makeText(requireContext(), "Failed to add category", Toast.LENGTH_SHORT)
-                        .show()
-                }
-        }
+        // Add category on button click
+        addCategoryButton.setOnClickListener { addCategory() }
     }
 
+
+
+    /**
+     * Adds a new category to the database.
+     */
     private fun addCategory() {
         Log.d(TAG, "addCategory")
         val name = categoryNameInput.text.toString().trim()
         if (name.isEmpty()) {
-            Toast.makeText(requireContext(), "Please enter a category name.", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(requireContext(), "Please enter a category name.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -140,11 +176,7 @@ class CreateCategoryFragment : Fragment() {
             expenseRadioButton.isChecked -> "Expense"
             incomeRadioButton.isChecked -> "Income"
             else -> {
-                Toast.makeText(
-                    requireContext(),
-                    "Please select Expense or Income.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Please select Expense or Income.", Toast.LENGTH_SHORT).show()
                 return
             }
         }
@@ -154,54 +186,111 @@ class CreateCategoryFragment : Fragment() {
             return
         }
 
-        val categoryData = mapOf("name" to name, "type" to type)
-        database.child("categories").push().setValue(categoryData)
-            .addOnSuccessListener {
-                Log.d(TAG, "Saved under Users/${user.uid}/Category: $categoryData")
-                Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
+        // Check for duplicates
+        database.orderByChild("name").equalTo(name).get().addOnSuccessListener { snapshot ->
+            var duplicateFound = false
 
-                val display = "$name ($type)"
-                categoryList.add(display)
-                categoryAdapter.notifyItemInserted(categoryList.size - 1)
-                categoryNameInput.text.clear()
-                typeRadioGroup.clearCheck()
+            snapshot.children.forEach { child ->
+                val existingType = child.child("type").getValue(String::class.java)
+                if (existingType == type) {
+                    duplicateFound = true
+                    return@forEach
+                }
             }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error adding category", exception)
-                Toast.makeText(requireContext(), "Failed to add category", Toast.LENGTH_SHORT)
-                    .show()
+
+            if (duplicateFound) {
+                Toast.makeText(requireContext(), "This category already exists.", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
             }
-    }
-    override fun onStart() {
-        super.onStart()
-        
-        // Show this fragment's tutorial overlay once per install/user
-        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val hasSeenCreateCategoryTut = prefs.getBoolean("hasSeenCreateCategoryTut", false)
-        
-        if (!hasSeenCreateCategoryTut) {
-            Log.d(TAG, "onStart: Launching Create Category tutorial overlay")
-            
-            // Build the tutorial page explaining this screen's controls
-            val tutorialOverlay = TutorialFragment.newInstance(
-                R.drawable.lacalm1,  // Replace with your appropriate drawable
-                // Explanatory text for creating a category:
-                "This is the Create Category screen./n" +
-                        "1. Type a name into 'Category Name'./n" +
-                        "2. Select whether it’s an Expense or Income using the radio buttons./n" +
-                        "3. Tap 'Add Category' to save it to your account and see it appear below./n" +
-                        "4. Your new category will now be listed, so you can use it when logging transactions."
-            )
-            
-            // Overlay the tutorial on top of the existing fragmentContainerView
-            parentFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainerView, tutorialOverlay)
-                .commit()
-            
-            // Mark as seen so it won't show next time
-            prefs.edit()
-                .putBoolean("hasSeenCreateCategoryTut", true)
-                .apply()
+
+            // No duplicate, proceed to add
+            val categoryData = mapOf("name" to name, "type" to type)
+            database.push().setValue(categoryData)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Saved: $categoryData")
+                    Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
+
+                    // No need to manually add to categoryList — Firebase listener will do it
+                    categoryNameInput.text.clear()
+                    typeRadioGroup.clearCheck()
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "Error adding category", exception)
+                    Toast.makeText(requireContext(), "Failed to add category", Toast.LENGTH_SHORT).show()
+                }
+        }.addOnFailureListener { exception ->
+            Log.e(TAG, "Failed to check duplicates", exception)
+            Toast.makeText(requireContext(), "Error checking for duplicates", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun showEditDialog(category: Category) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_category, null)
+        val nameInput = dialogView.findViewById<EditText>(R.id.editCategoryNameInput)
+        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.editTypeRadioGroup)
+        val incomeRadio = dialogView.findViewById<RadioButton>(R.id.editIncomeRadioButton)
+        val expenseRadio = dialogView.findViewById<RadioButton>(R.id.editExpenseRadioButton)
+
+        nameInput.setText(category.name)
+        if (category.type == "Income") incomeRadio.isChecked = true else expenseRadio.isChecked = true
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Edit Category")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val newName = nameInput.text.toString().trim()
+                val newType = when {
+                    incomeRadio.isChecked -> "Income"
+                    expenseRadio.isChecked -> "Expense"
+                    else -> ""
+                }
+
+                if (newName.isEmpty() || newType.isEmpty()) {
+                    Toast.makeText(requireContext(), "Please enter valid data", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val updatedCategory = mapOf("name" to newName, "type" to newType)
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+                val categoryRef = FirebaseDatabase.getInstance()
+                    .getReference("users").child(uid).child("categories").child(category.id)
+
+                categoryRef.updateChildren(updatedCategory)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Category updated", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Update failed", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
+    private fun deleteCategory(category: Category) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Category")
+            .setMessage("Are you sure you want to delete the category \"${category.name}\"?")
+            .setPositiveButton("Delete") { _, _ ->
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+                val categoryRef = FirebaseDatabase.getInstance()
+                    .getReference("users").child(uid).child("categories").child(category.id)
+
+                categoryRef.removeValue()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Failed to delete category", Toast.LENGTH_SHORT).show()
+                        Log.e(TAG, "Delete failed", e)
+                    }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
+
+
 }
