@@ -49,7 +49,6 @@
         android:layout_height="50dp"
         android:backgroundTint="@color/dark_green"
         android:fontFamily="@font/chakra_petch_bold"
-        android:onClick="addBudgetBuddy"
         android:text="+   Add Buddy"
         android:textAlignment="center"
         android:textColor="@color/white"

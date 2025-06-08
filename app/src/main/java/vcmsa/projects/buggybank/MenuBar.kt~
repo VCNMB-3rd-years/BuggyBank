@@ -220,9 +220,9 @@ class MenuBar : AppCompatActivity() {
                             fillAfter = true
                             startOffset = 150
                         }
-                        FragProf.view?.startAnimation(fadeOut)
-                        FragProf.view?.postDelayed({ FragProf.view?.startAnimation(fadeIn) }, 150)
-                        replaceFrag(FragProf)
+                        FragProfile.view?.startAnimation(fadeOut)
+                        FragProfile.view?.postDelayed({ FragProfile.view?.startAnimation(fadeIn) }, 150)
+                        replaceFrag(FragProfile)
                     }
                     R.id.is_currencyConvertor -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
