@@ -124,8 +124,7 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/chakra_petch"
                 android:backgroundTint="@color/green"
-                android:layout_marginBottom="24dp"
-                android:layout_gravity="right"/>
+                android:layout_marginBottom="24dp" />
 
             <!-- STEP TWO -->
             <LinearLayout
