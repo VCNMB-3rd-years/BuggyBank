@@ -88,8 +88,8 @@ class CreateTransactionFragment : Fragment() {
         val layoutStepThree = view.findViewById<LinearLayout>(R.id.layoutStepThree)
 
         //back to stepOne and stepTwo
-        val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
-        val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
+//        val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
+//        val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
 
         // Make date/time fields non-editable
         listOf(etDate, etStartTime, etEndTime).forEach {
@@ -143,24 +143,47 @@ class CreateTransactionFragment : Fragment() {
         etStartTime.setOnClickListener { showTimePicker(etStartTime) }
         etEndTime.setOnClickListener { showTimePicker(etEndTime) }
         btnAddImage.setOnClickListener { showImagePickerDialog() }
-        btnAdd.setOnClickListener { saveTransaction() }
+        btnAdd.setOnClickListener {
+            saveTransaction()
+            // Reset Step Two
+            layoutStepTwo.visibility = View.GONE
+            layoutStepTwo.alpha = 0.5f
+            layoutStepTwo.isEnabled = false
+            layoutStepTwo.isClickable = false
+            layoutStepTwo.isFocusable = false
+
+            // Reset Step Three
+            layoutStepThree.visibility = View.GONE
+            layoutStepThree.alpha = 0.5f
+            layoutStepThree.isEnabled = false
+            layoutStepThree.isClickable = false
+            layoutStepThree.isFocusable = false
+
+            // Scroll back to Step One
+            val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
+            val txtStepOne = view.findViewById<TextView>(R.id.txtStepOne)
+            scrollView.post {
+                scrollView.smoothScrollTo(0, txtStepOne.top)
+            }
+
+        }
 
         val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
         val txtStepOne = view.findViewById<TextView>(R.id.txtStepOne)
         val txtStepTwo = view.findViewById<TextView>(R.id.txtStepTwo)
         val txtStepThree = view.findViewById<TextView>(R.id.txtStepThree)
 
-        btnBackToOne.setOnClickListener {
-            scrollView.post {
-                scrollView.smoothScrollTo(0, txtStepOne.top)
-            }
-        }
-
-        btnBackToTwo.setOnClickListener {
-            scrollView.post {
-                scrollView.smoothScrollTo(0, txtStepTwo.top)
-            }
-        }
+//        btnBackToOne.setOnClickListener {
+//            scrollView.post {
+//                scrollView.smoothScrollTo(0, txtStepOne.top)
+//            }
+//        }
+//
+//        btnBackToTwo.setOnClickListener {
+//            scrollView.post {
+//                scrollView.smoothScrollTo(0, txtStepTwo.top)
+//            }
+//        }
 
         btnNextToTwo.setOnClickListener {
             val titleText = etTitle.text.toString()
@@ -214,7 +237,7 @@ class CreateTransactionFragment : Fragment() {
                 layoutStepTwo.isFocusable = true
 
                 scrollView.post {
-                    scrollView.smoothScrollTo(0, txtStepTwo.top)
+                    scrollView.smoothScrollTo(0,layoutStepTwo.top)
                 }
             } else {
                 scrollView.post {
@@ -276,8 +299,9 @@ class CreateTransactionFragment : Fragment() {
                 layoutStepThree.isFocusable = true
 
                 scrollView.post {
-                    scrollView.smoothScrollTo(0, txtStepThree.top)
+                    scrollView.smoothScrollTo(0, layoutStepThree.top)
                 }
+
             } else {
                 scrollView.post {
                     scrollView.smoothScrollTo(0, txtStepTwo.top)

@@ -20,8 +20,8 @@
         android:id="@+id/ic_analysis"
         android:icon="@drawable/rounded_monitoring_24"
         android:title="Analysis"/>
-    <item
+    <!--<item
         android:id="@+id/ic_trophies"
         android:icon="@drawable/rounded_social_leaderboard_24"
-        android:title="Trophies" />
+        android:title="Trophies" />-->
 </menu>

@@ -2,8 +2,10 @@ package vcmsa.projects.buggybank
 
 import android.content.Context
 import android.os.Bundle
+
 import android.os.Handler
 import android.os.Looper
+
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -38,6 +40,7 @@ class SetBudgetFragment : Fragment() {
         layoutCategoryButtons = view.findViewById(R.id.layoutCategoryButtons)
 
         val maxValueEditText = view.findViewById<TextInputEditText>(R.id.etMaxValueInput)
+
         val value = maxValueEditText.text.toString()
         val btnSetMax: Button = view.findViewById(R.id.btnSetMax)
 
@@ -170,28 +173,28 @@ class SetBudgetFragment : Fragment() {
                 }
             })
     }
+
     override fun onStart() {
         super.onStart()
-        
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
-        
+
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
-                R.drawable.anti, // Replace with a valid drawable in your project
-                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times\n" +
-                        "You can set your budgets here.\n" +
-                        "Select a category/n" + "Set an amount\n" +
-                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'\n" +
+                R.drawable.anti,
+                "i remember my mother telling me 'There is Mac Donald's at the Colony'... good times.\n" +
+                        "You can set your budgets here:\n" +
+                        "• Select a category\n" +
+                        "• Set an amount using the slider\n" +
+                        "• Click 'Define' to save\n\n" +
                         "• Tap OK to begin!"
             )
-            
+
             parentFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .add(R.id.fragmentContainerView, tutorialOverlay)
                 .commit()
-            
+
             prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
         }
     }
-
 }

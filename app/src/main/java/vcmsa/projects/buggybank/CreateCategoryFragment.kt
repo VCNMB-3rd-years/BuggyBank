@@ -89,7 +89,7 @@ class CreateCategoryFragment : Fragment() {
         categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView)
         val inputLayout = view.findViewById<TextInputLayout>(R.id.categoryNameInput)
         categoryNameInput = inputLayout.editText as EditText
-        
+
         typeRadioGroup = view.findViewById(R.id.typeRadioGroup)
         expenseRadioButton = view.findViewById(R.id.expenseRadioButton)
         incomeRadioButton = view.findViewById(R.id.incomeRadioButton)
