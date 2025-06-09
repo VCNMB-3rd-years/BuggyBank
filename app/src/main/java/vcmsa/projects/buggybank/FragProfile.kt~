@@ -149,7 +149,7 @@ class FragProfile : Fragment() {
 
             if (profileImageUri != null) {
                 val storageReference = FirebaseStorage.getInstance().reference.child("images/$uid")
-                storageReference.putFile(profileImageUri)
+                storageReference.putFile(profileImageUri!!)
                     .addOnSuccessListener {
                         Log.d("FragProfile", "Image uploaded to Firebase Storage")
                     }

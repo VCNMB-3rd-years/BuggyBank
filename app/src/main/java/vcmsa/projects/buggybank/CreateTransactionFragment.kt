@@ -525,9 +525,9 @@ class CreateTransactionFragment : Fragment() {
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.butterfly, // Replace with a valid drawable in your project
-                "This is the transaction screen!/n" +
-                        "Add the transaction details here./n" +
-                        "Press 'Next' to continue and if you missed a spot you can always press 'Back' to go back ./n" +
+                "This is the transaction screen!\n" +
+                        "Add the transaction details here.\n" +
+                        "Press 'Next' to continue and if you missed a spot you can always press 'Back' to go back .\n" +
                         "• Tap OK to begin!"
             )
             

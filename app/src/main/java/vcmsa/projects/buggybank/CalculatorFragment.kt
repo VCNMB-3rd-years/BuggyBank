@@ -63,9 +63,9 @@ class CalculatorFragment : Fragment() {
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.butterfly, // Replace with a valid drawable in your project
-                "Numbers! Numbers! Numbers!/n" +
-                        "BuggyBank Calculator allows you to perform basic arithmetic operations./n" +
-                        "you dont have to exit the app to use it./n" +
+                "Numbers! Numbers! Numbers!\n" +
+                        "BuggyBank Calculator allows you to perform basic arithmetic operations.\n" +
+                        "you don't have to exit the app to use it.\n" +
                         "• Tap OK to begin!"
             )
             
