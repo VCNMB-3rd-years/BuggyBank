@@ -2,16 +2,9 @@ package vcmsa.projects.buggybank
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
@@ -35,7 +28,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
             insets
         }
         binding.btnSubmit.setOnClickListener {
-            val email = binding.txtEmailAddress.text.toString().trim { it <= ' ' }
+            val email = binding.txtEmailAddress.text.toString().trim ()
             if (email.isEmpty()) {
                 Toast.makeText(
                     this@ForgotPasswordActivity,
@@ -66,5 +59,9 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
 
     }
-
+    
+    private fun extracted() {
+        ActivityForgotPasswordBinding
+    }
+    
 }

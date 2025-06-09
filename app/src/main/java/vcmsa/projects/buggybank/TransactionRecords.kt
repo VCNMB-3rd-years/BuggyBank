@@ -1,6 +1,7 @@
 package vcmsa.projects.buggybank
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -318,8 +319,29 @@ class TransactionRecords : Fragment() {
             updateDisplayedTransactions(filteredRecords)
         }
     }
-
-
+    
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.wap, // Replace with a valid drawable in your project
+                "Check out your transactions./n" + "You can filter by date range and category./n" +
+                        "Also you can search for specific records./n" +
+                        "You can edit and delete transactions./n" +
+                        "• Tap OK to begin!"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
+    }
 
 
 }

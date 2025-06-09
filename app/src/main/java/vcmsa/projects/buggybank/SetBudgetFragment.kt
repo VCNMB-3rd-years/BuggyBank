@@ -1,5 +1,6 @@
 package vcmsa.projects.buggybank
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -169,6 +170,29 @@ class SetBudgetFragment : Fragment() {
                     Toast.makeText(context, "Error accessing database", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.anti, // Replace with a valid drawable in your project
+                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times/n" +
+                        "You can set your budgets here./n" +
+                        "Select a category/n" + "Set an amount/n" +
+                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'/n" +
+                        "• Tap OK to begin!"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
     }
 
 }

@@ -3,9 +3,12 @@ package vcmsa.projects.buggybank
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ContentValues
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -511,5 +514,28 @@ class CreateTransactionFragment : Fragment() {
         spPayment.setSelection(0)
         imageUri = null
         imagePreview.setImageDrawable(null)
+    }
+    
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.butterfly, // Replace with a valid drawable in your project
+                "This is the transaction screen!/n" +
+                        "Add the transaction details here./n" +
+                        "Press 'Next' to continue and if you missed a spot you can always press 'Back' to go back ./n" +
+                        "• Tap OK to begin!"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
     }
 }
