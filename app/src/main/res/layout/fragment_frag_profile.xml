@@ -30,7 +30,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtName"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="8dp"
@@ -41,7 +41,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Name"
                 android:inputType="textPersonName"
@@ -53,7 +53,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtSurname"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="8dp"
@@ -65,7 +65,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Surname"
                 android:inputType="textPersonName"
@@ -77,7 +77,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtProfileEmail"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="8dp"
@@ -89,7 +89,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
@@ -101,7 +101,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtPhone"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="8dp"
@@ -113,7 +113,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Phone Number"
                 android:inputType="phone"
@@ -125,7 +125,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtAddress"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="8dp"
@@ -137,7 +137,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Address"
                 android:inputType="textPostalAddress"
@@ -149,7 +149,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtBirthday"
             android:layout_width="350dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginBottom="16dp"
@@ -161,7 +161,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="18"
+                android:ems="22"
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Birthday"
                 android:inputType="date"
