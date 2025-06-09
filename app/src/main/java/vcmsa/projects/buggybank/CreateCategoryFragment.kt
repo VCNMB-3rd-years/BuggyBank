@@ -2,6 +2,7 @@ package vcmsa.projects.buggybank
 
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -92,7 +93,28 @@ class CreateCategoryFragment : Fragment() {
         addCategoryButton = view.findViewById(R.id.addCategoryButton)
         return view
     }
-
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.lacalm1, // Replace with a valid drawable in your project
+                "Movies, TV Shows, and Music/n" +
+                        "Add new categories to help organize your transactions./n" +
+                        "selected income or expense before hitting done./n" +
+                        "• Tap OK to begin! PS you watch Dune and done to add that to BuggyBank"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
