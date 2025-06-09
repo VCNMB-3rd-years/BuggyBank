@@ -515,6 +515,7 @@ class CreateTransactionFragment : Fragment() {
         imageUri = null
         imagePreview.setImageDrawable(null)
     }
+
     
     override fun onStart() {
         super.onStart()
@@ -539,3 +540,6 @@ class CreateTransactionFragment : Fragment() {
         }
     }
 }
+
+}
+

@@ -30,21 +30,6 @@
         />
 
     <item
-        android:id="@+id/is_budgetBuddy"
-        android:icon="@drawable/baseline_people_outline_24"
-        android:title="Budget Buddy"/>
-
-
-
-    <item
-        android:id="@+id/is_switchAccount"
-        android:icon="@drawable/rounded_sync_alt_24"
-        android:title="Swicth Account"
-        />
-
-
-
-    <item
         android:id="@+id/is_calculator"
         android:icon="@drawable/rounded_calculate_24"
         android:title="Calculator"/>
