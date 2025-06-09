@@ -45,9 +45,7 @@
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Name"
                 android:inputType="textPersonName"
-                android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:textSize="22sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -69,11 +67,10 @@
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Surname"
                 android:inputType="textPersonName"
-                android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:textSize="22sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Non-editable Email Field -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtProfileEmail"
             android:layout_width="350dp"
@@ -87,6 +84,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txtSurname">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtProfileEmail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="22"
@@ -94,8 +92,7 @@
                 android:hint="Email"
                 android:inputType="textEmailAddress"
                 android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:enabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -117,9 +114,7 @@
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Phone Number"
                 android:inputType="phone"
-                android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:textSize="22sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -141,9 +136,7 @@
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Address"
                 android:inputType="textPostalAddress"
-                android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:textSize="22sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -165,9 +158,7 @@
                 android:fontFamily="@font/chakra_petch"
                 android:hint="Birthday"
                 android:inputType="date"
-                android:textSize="22sp"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="106dp" />
+                android:textSize="22sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

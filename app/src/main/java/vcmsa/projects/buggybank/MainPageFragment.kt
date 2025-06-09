@@ -170,10 +170,10 @@ class MainPageFragment : Fragment() {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.butterfly, // Replace with a valid drawable in your project
                 "WELCOME!/n" +
-                        "This is BuggyBank, your personal budgeting app!./n" +
-                        "And this is the main page./n" + "Here you can view your wallet and transactions./n" +
-                        "I hope you love graphs go ahead and make your first transaction./n" +
-                        "• by tapping the + button to add a transaction and see the magic./n" +
+                        "This is BuggyBank, your personal budgeting app!.\n" +
+                        "And this is the main page./n" + "Here you can view your wallet and transactions.\n" +
+                        "I hope you love graphs go ahead and make your first transaction.\n" +
+                        "• by tapping the + button to add a transaction and see the magic.\n" +
                         "• Tap OK to begin!"
             )
             

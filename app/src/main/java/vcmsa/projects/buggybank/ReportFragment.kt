@@ -205,9 +205,9 @@ class ReportFragment : Fragment() {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.wap,  // Replace with your appropriate drawable
                 // Explanatory text for creating a category:
-                "This the reports screen.../n" +
-                        "You can check and download your reports here./n" +
-                        "You also filter your reports here/n"
+                "This the reports screen...\n" +
+                        "You can check and download your reports here.\n" +
+                        "You also filter your reports here\n"
             )
             
             // Overlay the tutorial on top of the existing fragmentContainerView
