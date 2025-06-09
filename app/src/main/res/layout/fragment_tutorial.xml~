@@ -49,12 +49,12 @@
 
     <Button
         android:id="@+id/nextButton"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/dark_green"
+        android:backgroundTint="#4CAF50"
         android:text="Next"
-        android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

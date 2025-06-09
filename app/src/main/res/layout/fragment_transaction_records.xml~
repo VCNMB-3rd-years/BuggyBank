@@ -14,26 +14,29 @@
 
         <TextView
             android:id="@+id/SortCategory"
-            android:layout_width="51dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/filter_button"
-            android:scaleX="-1"
 
+            android:scaleX="-1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.408" />
+            app:layout_constraintVertical_bias="0.376" />
 
         <TextView
             android:id="@+id/txtTimePeriod"
-            android:layout_width="164dp"
-            android:layout_height="54dp"
-            android:background="@drawable/vector_textbox"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
             android:clickable="true"
             android:fontFamily="@font/chakra_petch_bold"
             android:gravity="center"
             android:hint="Month"
-            android:textSize="30sp"
+            android:textColor="@color/black"
+            app:strokeColor="#283D36"
+            app:strokeWidth="3dp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
@@ -101,6 +104,7 @@
             android:layout_width="367dp"
             android:layout_height="340dp"
             android:scrollbars="vertical"
+            android:background="@drawable/bg_dashed_border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.545"
@@ -123,13 +127,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/rvTransactions" />
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:queryHint="Search..."
+            android:iconifiedByDefault="false"
+            app:layout_constraintBottom_toTopOf="@+id/tvTransactionsFiltering"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/tvTransactionsFiltering"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/chakra_petch_bold"
-            android:text="Transaction filtering"
+            android:text="Transactions"
 
             android:textAllCaps="true"
             android:textSize="25sp"
