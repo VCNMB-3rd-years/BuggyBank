@@ -102,7 +102,7 @@ class CurrencyConverterFragment : Fragment() {
         val hasSeenCreateCategoryTut = prefs.getBoolean("hasSeenCreateCategoryTut", false)
         
         if (!hasSeenCreateCategoryTut) {
-            Log.d(ContentValues.TAG, "onStart: Launching tutorial overlay")
+            Log.d(ContentValues.TAG, "onStart: Launching Create Category tutorial overlay")
             
             // Build the tutorial page explaining this screen's controls
             val tutorialOverlay = TutorialFragment.newInstance(

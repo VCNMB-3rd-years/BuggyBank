@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class ProgressBar : Fragment() {
+class BudgetProgressBar : Fragment() {
 
     private lateinit var layoutBudgetItems: LinearLayout
     private lateinit var dbRef: DatabaseReference
@@ -20,7 +20,7 @@ class ProgressBar : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_progress_bar, container, false)
+        val view = inflater.inflate(R.layout.fragment_budget_progress_bar, container, false)
         layoutBudgetItems = view.findViewById(R.id.layoutBudgetItems)
 
         loadBudgetProgress()
@@ -82,9 +82,16 @@ class ProgressBar : Fragment() {
         txtCategoryName.text = category
         txtAmountInfo.text = "Spent R$spent of R$budget"
 
-        val percent = if (budget > 0) (spent * 100 / budget).coerceAtMost(100) else 0
-        progressBar.progress = percent
+        val percent = if (budget > 0) (spent * 100 / budget) else 0
+        progressBar.progress = percent.coerceAtMost(100)
+
+        if (spent > budget) {
+            progressBar.progressDrawable = requireContext().getDrawable(R.drawable.progress_bar_red)
+        } else {
+            progressBar.progressDrawable = requireContext().getDrawable(R.drawable.progress_bar_green)
+        }
 
         layoutBudgetItems.addView(itemView)
     }
+
 }

@@ -2,6 +2,7 @@ package vcmsa.projects.buggybank
 
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -92,7 +93,28 @@ class CreateCategoryFragment : Fragment() {
         addCategoryButton = view.findViewById(R.id.addCategoryButton)
         return view
     }
-
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.lacalm1, // Replace with a valid drawable in your project
+                "Movies, TV Shows, and Music/n" +
+                        "Add new categories to help organize your transactions./n" +
+                        "selected income or expense before hitting done./n" +
+                        "• Tap OK to begin! PS you watch Dune and done to add that to BuggyBank"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
@@ -122,20 +144,48 @@ class CreateCategoryFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val category = categoryAdapter.getItemAt(position)
 
-                // Show confirmation dialog
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Delete Category")
-                    .setMessage("Are you sure you want to delete \"${category.name}\"?")
-                    .setPositiveButton("Delete") { _, _ ->
-                        deleteCategory(category)
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        categoryAdapter.notifyItemChanged(position) // Reset the swiped item
-                    }
-                    .show()
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                if (uid == null) {
+                    Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+                    categoryAdapter.notifyItemChanged(position)
+                    return
+                }
+
+                val transactionsRef = FirebaseDatabase.getInstance()
+                    .getReference("users").child(uid).child("transactions")
+
+                // Check if any transaction uses this category
+                transactionsRef.orderByChild("category").equalTo(category.name)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                // Category is in use
+                                Toast.makeText(requireContext(), "Cannot delete: Category is used in transactions", Toast.LENGTH_LONG).show()
+                                categoryAdapter.notifyItemChanged(position)
+                            } else {
+                                // Show confirmation dialog
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Delete Category")
+                                    .setMessage("Are you sure you want to delete \"${category.name}\"?")
+                                    .setPositiveButton("Delete") { _, _ ->
+                                        deleteCategory(category)
+                                    }
+                                    .setNegativeButton("Cancel") { _, _ ->
+                                        categoryAdapter.notifyItemChanged(position)
+                                    }
+                                    .show()
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(requireContext(), "Error checking transactions", Toast.LENGTH_SHORT).show()
+                            categoryAdapter.notifyItemChanged(position)
+                        }
+                    })
             }
         })
         itemTouchHelper.attachToRecyclerView(categoryRecyclerView)
+
 
         // Load categories from Firebase
         database.addValueEventListener(object : ValueEventListener {
@@ -147,6 +197,10 @@ class CreateCategoryFragment : Fragment() {
                     val type = child.child("type").getValue(String::class.java) ?: continue
                     categoryList.add(Category(id, name, type))
                 }
+
+                // 🔽 Sort alphabetically by name (case-insensitive)
+                categoryList.sortBy { it.name.lowercase() }
+
                 categoryAdapter.notifyDataSetChanged()
             }
 
@@ -154,6 +208,7 @@ class CreateCategoryFragment : Fragment() {
                 Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
             }
         })
+
 
         // Add category on button click
         addCategoryButton.setOnClickListener { addCategory() }
@@ -269,28 +324,45 @@ class CreateCategoryFragment : Fragment() {
 
 
     private fun deleteCategory(category: Category) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Delete Category")
-            .setMessage("Are you sure you want to delete the category \"${category.name}\"?")
-            .setPositiveButton("Delete") { _, _ ->
-                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
-                val categoryRef = FirebaseDatabase.getInstance()
-                    .getReference("users").child(uid).child("categories").child(category.id)
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-                categoryRef.removeValue()
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
+        val transactionsRef = FirebaseDatabase.getInstance()
+            .getReference("users").child(uid).child("transactions")
+
+        // Check if category is in use
+        transactionsRef.orderByChild("category").equalTo(category.name)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // Category is in use
+                        Toast.makeText(requireContext(), "Cannot delete category. It is used in existing transactions.", Toast.LENGTH_LONG).show()
+                    } else {
+                        // Not in use, proceed to confirm delete
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Delete Category")
+                            .setMessage("Are you sure you want to delete the category \"${category.name}\"?")
+                            .setPositiveButton("Delete") { _, _ ->
+                                val categoryRef = FirebaseDatabase.getInstance()
+                                    .getReference("users").child(uid).child("categories").child(category.id)
+
+                                categoryRef.removeValue()
+                                    .addOnSuccessListener {
+                                        Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(requireContext(), "Failed to delete category", Toast.LENGTH_SHORT).show()
+                                        Log.e(TAG, "Delete failed", e)
+                                    }
+                            }
+                            .setNegativeButton("Cancel", null)
+                            .show()
                     }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(requireContext(), "Failed to delete category", Toast.LENGTH_SHORT).show()
-                        Log.e(TAG, "Delete failed", e)
-                    }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(requireContext(), "Error checking transactions", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "Database error", error.toException())
+                }
+            })
     }
-
-
-
-
 }

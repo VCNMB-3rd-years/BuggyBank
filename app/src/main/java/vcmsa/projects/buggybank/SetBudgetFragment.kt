@@ -1,5 +1,6 @@
 package vcmsa.projects.buggybank
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -77,15 +78,25 @@ class SetBudgetFragment : Fragment() {
             .child(userId)
             .child("categories")
 
-
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 layoutCategoryButtons.removeAllViews()
+
+                // Create a list to hold categories temporarily
+                val categories = mutableListOf<Triple<String, String, String>>() // (id, name, type)
+
                 for (categorySnapshot in snapshot.children) {
                     val categoryId = categorySnapshot.key ?: continue
                     val categoryName = categorySnapshot.child("name").getValue(String::class.java) ?: continue
                     val categoryType = categorySnapshot.child("type").getValue(String::class.java) ?: "Expense"
+                    categories.add(Triple(categoryId, categoryName, categoryType))
+                }
 
+                // Sort categories by name alphabetically (case-insensitive)
+                categories.sortBy { it.second.lowercase() }
+
+                // Add buttons for sorted categories
+                for ((categoryId, categoryName, categoryType) in categories) {
                     val button = Button(requireContext())
                     button.text = categoryName
                     button.layoutParams = LinearLayout.LayoutParams(
@@ -95,18 +106,12 @@ class SetBudgetFragment : Fragment() {
                         setMargins(8, 8, 8, 8)
                     }
 
-                    var lastSelectedButton: Button? = null
                     button.setOnClickListener {
                         selectedCategoryId = categoryId
                         selectedCategoryName = categoryName
                         selectedCategoryType = categoryType
                         txtSelectedCategory.text = categoryName
                     }
-
-                    // Visual feedback
-                    lastSelectedButton?.setBackgroundResource(android.R.drawable.btn_default)
-                    button.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_200))
-                    lastSelectedButton = button
 
                     layoutCategoryButtons.addView(button)
                 }
@@ -117,6 +122,7 @@ class SetBudgetFragment : Fragment() {
             }
         })
     }
+
 
     private fun saveBudgetToFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -169,6 +175,29 @@ class SetBudgetFragment : Fragment() {
                     Toast.makeText(context, "Error accessing database", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+    override fun onStart() {
+        super.onStart()
+        
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
+        
+        if (!hasSeenCalcTut) {
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.anti, // Replace with a valid drawable in your project
+                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times/n" +
+                        "You can set your budgets here./n" +
+                        "Select a category/n" + "Set an amount/n" +
+                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'/n" +
+                        "• Tap OK to begin!"
+            )
+            
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .commit()
+            
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
+        }
     }
 
 }

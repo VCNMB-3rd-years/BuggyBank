@@ -13,8 +13,5 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-<style name= "CustomFont">
-        <item name="android:typeface">normal</item>
-        <item name="android:fontFamily">@font/chakra_petch</item>
-    </style>
+
 </resources>
