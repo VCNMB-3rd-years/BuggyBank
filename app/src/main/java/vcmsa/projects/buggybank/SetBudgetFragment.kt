@@ -2,11 +2,11 @@ package vcmsa.projects.buggybank
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -34,26 +34,24 @@ class SetBudgetFragment : Fragment() {
         btnSet = view.findViewById(R.id.btnSet)
         layoutCategoryButtons = view.findViewById(R.id.layoutCategoryButtons)
 
-        // Add this new block here
-        val etMaxValue: EditText = view.findViewById(R.id.etMaxValue)
+        val maxValueEditText = view.findViewById<TextInputEditText>(R.id.etMaxValue)
+        val value = maxValueEditText.text.toString()
         val btnSetMax: Button = view.findViewById(R.id.btnSetMax)
 
         btnSetMax.setOnClickListener {
-            val input = etMaxValue.text.toString()
-            if (input.isNotEmpty()) {
-                val max = input.toIntOrNull()
-                if (max != null && max > 0) {
-                    seekBar.max = max
-                    Toast.makeText(context, "Max budget set to R$max", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT)
-                        .show()
-                }
+            val input = maxValueEditText.text.toString()
+            val max = input.toIntOrNull()
+            if (max != null && max > 0) {
+                seekBar.max = max
+                Toast.makeText(context, "Max budget set to R$max", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT).show()
             }
         }
+
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                txtSeekValue.text = "R$progress"
+                txtSeekValue.text = "R$${progress}"
             }
 
             override fun onStartTrackingTouch(sb: SeekBar?) {}
@@ -62,8 +60,8 @@ class SetBudgetFragment : Fragment() {
 
         btnSet.setOnClickListener {
             saveBudgetToFirebase()
-            etMaxValue.text.clear()
-            seekBar.progress =0
+            maxValueEditText.text?.clear()
+            seekBar.progress = 0
         }
 
         loadCategoriesFromFirebase()
@@ -81,9 +79,7 @@ class SetBudgetFragment : Fragment() {
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 layoutCategoryButtons.removeAllViews()
-
-                // Create a list to hold categories temporarily
-                val categories = mutableListOf<Triple<String, String, String>>() // (id, name, type)
+                val categories = mutableListOf<Triple<String, String, String>>()
 
                 for (categorySnapshot in snapshot.children) {
                     val categoryId = categorySnapshot.key ?: continue
@@ -92,10 +88,8 @@ class SetBudgetFragment : Fragment() {
                     categories.add(Triple(categoryId, categoryName, categoryType))
                 }
 
-                // Sort categories by name alphabetically (case-insensitive)
                 categories.sortBy { it.second.lowercase() }
 
-                // Add buttons for sorted categories
                 for ((categoryId, categoryName, categoryType) in categories) {
                     val button = Button(requireContext())
                     button.text = categoryName
@@ -111,6 +105,13 @@ class SetBudgetFragment : Fragment() {
                         selectedCategoryName = categoryName
                         selectedCategoryType = categoryType
                         txtSelectedCategory.text = categoryName
+
+                        // Highlight selected
+                        for (i in 0 until layoutCategoryButtons.childCount) {
+                            val otherBtn = layoutCategoryButtons.getChildAt(i) as Button
+                            otherBtn.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
+                        }
+                        button.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
                     }
 
                     layoutCategoryButtons.addView(button)
@@ -123,30 +124,20 @@ class SetBudgetFragment : Fragment() {
         })
     }
 
-
     private fun saveBudgetToFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val categoryName = selectedCategoryName
-        val categoryType = selectedCategoryType
-        val amount = seekBar.progress
-
-        if (categoryName.isNullOrEmpty()) {
+        val categoryName = selectedCategoryName ?: run {
             Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
             return
         }
+        val categoryType = selectedCategoryType
+        val amount = seekBar.progress
 
         val dbRef = FirebaseDatabase.getInstance()
             .getReference("users")
             .child(userId)
             .child("budgets")
 
-        val budgetId = dbRef.push().key ?: return
-        val budgetData = mapOf(
-            "category" to categoryName,
-            "amount" to amount
-        )
-
-        // Check if a budget for this category already exists
         dbRef.orderByChild("category").equalTo(categoryName)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -176,28 +167,28 @@ class SetBudgetFragment : Fragment() {
                 }
             })
     }
+
     override fun onStart() {
         super.onStart()
-        
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
-        
+
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
-                R.drawable.anti, // Replace with a valid drawable in your project
-                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times\n" +
-                        "You can set your budgets here.\n" +
-                        "Select a category/n" + "Set an amount\n" +
-                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'\n" +
+                R.drawable.anti,
+                "i remember my mother telling me 'There is Mac Donald's at the Colony'... good times.\n" +
+                        "You can set your budgets here:\n" +
+                        "• Select a category\n" +
+                        "• Set an amount using the slider\n" +
+                        "• Click 'Define' to save\n\n" +
                         "• Tap OK to begin!"
             )
-            
+
             parentFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
+                .add(R.id.fragmentContainerView, tutorialOverlay)
                 .commit()
-            
+
             prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
         }
     }
-
 }

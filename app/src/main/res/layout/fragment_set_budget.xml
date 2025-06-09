@@ -28,6 +28,7 @@
         android:layout_height="164dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="Scroll view"
         android:background="@drawable/bg_dashed_border"
         app:layout_constraintBottom_toTopOf="@+id/txtAddCategoriesHeading"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +54,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/txtHeadingChange"
         app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintTop_toBottomOf="@+id/scrollCategoryButtons"
+        app:layout_constraintTop_toBottomOf="@+id/scrollCategoryButtons"
         app:layout_constraintHorizontal_bias="0.118"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -71,6 +72,7 @@ app:layout_constraintTop_toBottomOf="@+id/scrollCategoryButtons"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etMaxValueInput"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="number"

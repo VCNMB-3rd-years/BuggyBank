@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -86,7 +87,9 @@ class CreateCategoryFragment : Fragment() {
         Log.d(TAG, "onCreateView")
         val view = inflater.inflate(R.layout.fragment_create_category, container, false)
         categoryRecyclerView = view.findViewById(R.id.categoryRecyclerView)
-        categoryNameInput = view.findViewById(R.id.categoryNameInput)
+        val inputLayout = view.findViewById<TextInputLayout>(R.id.categoryNameInput)
+        categoryNameInput = inputLayout.editText as EditText
+
         typeRadioGroup = view.findViewById(R.id.typeRadioGroup)
         expenseRadioButton = view.findViewById(R.id.expenseRadioButton)
         incomeRadioButton = view.findViewById(R.id.incomeRadioButton)
