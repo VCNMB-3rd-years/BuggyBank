@@ -61,6 +61,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="60dp"
+                android:contentDescription="Back button"
                 android:background="@android:color/transparent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
