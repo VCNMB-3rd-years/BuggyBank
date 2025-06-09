@@ -3,158 +3,201 @@ package vcmsa.projects.buggybank
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import vcmsa.projects.buggybank.databinding.FragmentSetBudgetBinding
-
-private const val TAG = "SetBudgetFragment"
+import com.google.firebase.database.*
 
 class SetBudgetFragment : Fragment() {
-    
-    // ViewBinding reference
-    private var _binding: FragmentSetBudgetBinding? = null
-    private val binding get() = _binding!!
-    
+
+    private lateinit var seekBar: SeekBar
+    private lateinit var txtSeekValue: TextView
+    private lateinit var txtSelectedCategory: TextView
+    private lateinit var btnSet: Button
+    private lateinit var layoutCategoryButtons: LinearLayout
+
+    private var selectedCategoryId: String? = null
+    private var selectedCategoryName: String? = null
+    private var selectedCategoryType: String? = null
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSetBudgetBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        // Obtain references from ViewBinding
-        val seekBar = binding.seekBarMin
-        val txtSeekValue = binding.txtSeekValue
-        val changingHeading = binding.txtHeadingChange
-        val etMaxValue = binding.etMaxValue
-        val btnSetMax = binding.btnSetMax
-        val btnSetCatMinimum = binding.btnSet
-        
-        // Map of category buttons to their labels
-        val categoryButtons = mapOf(
-            binding.btnEntertainment.id to "Entertainment",
-            binding.btnHealth.id to "Health",
-            binding.btnHousing.id to "Housing",
-            binding.btnClothing.id to "Clothing",
-            binding.btnFood.id to "Food",
-            binding.btnFuel.id to "Fuel",
-            binding.btnGroceries.id to "Groceries",
-            binding.btnInsurance.id to "Insurance",
-            binding.btnInternet.id to "Internet"
-        )
-        
-        // When a category button is clicked, update the heading text
-        for ((id, category) in categoryButtons) {
-            binding.root.findViewById<Button>(id).setOnClickListener {
-                changingHeading.text = category
+        val view = inflater.inflate(R.layout.fragment_set_budget, container, false)
+
+        seekBar = view.findViewById(R.id.seekBarMin)
+        txtSeekValue = view.findViewById(R.id.txtSeekValue)
+        txtSelectedCategory = view.findViewById(R.id.txtHeadingChange)
+        btnSet = view.findViewById(R.id.btnSet)
+        layoutCategoryButtons = view.findViewById(R.id.layoutCategoryButtons)
+
+        // Add this new block here
+        val etMaxValue: EditText = view.findViewById(R.id.etMaxValue)
+        val btnSetMax: Button = view.findViewById(R.id.btnSetMax)
+
+        btnSetMax.setOnClickListener {
+            val input = etMaxValue.text.toString()
+            if (input.isNotEmpty()) {
+                val max = input.toIntOrNull()
+                if (max != null && max > 0) {
+                    seekBar.max = max
+                    Toast.makeText(context, "Max budget set to R$max", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Please enter a valid number", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
-        
-        // Snap SeekBar progress to the nearest 10 and show its value
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
-                val snappedProgress = (progress / 10) * 10
-                sb?.progress = snappedProgress
-                txtSeekValue.text = "R$snappedProgress"
+                txtSeekValue.text = "R$progress"
             }
+
             override fun onStartTrackingTouch(sb: SeekBar?) {}
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
-        
-        // Save category-specific minimum to Firebase
-        btnSetCatMinimum.setOnClickListener {
-            val selectedCategory = changingHeading.text.toString()
-            val maxValue = seekBar.progress
-            
-            if (selectedCategory.isNotEmpty()) {
-                val budget = Budget(category = selectedCategory, maximumValue = maxValue)
-                val uid = FirebaseAuth.getInstance().currentUser?.uid
-                
-                if (uid != null) {
-                    val dbRef = FirebaseDatabase.getInstance()
-                        .getReference("users")
-                        .child(uid)
-                        .child("budgets")
-                    
-                    dbRef.push().setValue(budget)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "Budget saved!", Toast.LENGTH_SHORT).show()
-                            // Clear input fields
-                            etMaxValue.text.clear()
-                            seekBar.progress = 0
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(requireContext(), "Failed to save", Toast.LENGTH_SHORT).show()
-                            Log.e("FIREBASE_ERROR", "Save failed", e)
-                        }
-                } else {
-                    Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(requireContext(), "Select a category first", Toast.LENGTH_SHORT).show()
-            }
+
+        btnSet.setOnClickListener {
+            saveBudgetToFirebase()
+            etMaxValue.text.clear()
+            seekBar.progress =0
         }
-        
-        // Adjust the SeekBar's maximum based on user input
-        btnSetMax.setOnClickListener {
-            val maxInput = etMaxValue.text.toString().toIntOrNull()
-            if (maxInput != null && maxInput > 0) {
-                seekBar.max = maxInput
-                Toast.makeText(requireContext(), "SeekBar max set to $maxInput", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Please enter a valid number > 0", Toast.LENGTH_SHORT).show()
-            }
-        }
+
+        loadCategoriesFromFirebase()
+
+        return view
     }
-    
+
+    private fun loadCategoriesFromFirebase() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val dbRef = FirebaseDatabase.getInstance()
+            .getReference("users")
+            .child(userId)
+            .child("categories")
+
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                layoutCategoryButtons.removeAllViews()
+
+                // Create a list to hold categories temporarily
+                val categories = mutableListOf<Triple<String, String, String>>() // (id, name, type)
+
+                for (categorySnapshot in snapshot.children) {
+                    val categoryId = categorySnapshot.key ?: continue
+                    val categoryName = categorySnapshot.child("name").getValue(String::class.java) ?: continue
+                    val categoryType = categorySnapshot.child("type").getValue(String::class.java) ?: "Expense"
+                    categories.add(Triple(categoryId, categoryName, categoryType))
+                }
+
+                // Sort categories by name alphabetically (case-insensitive)
+                categories.sortBy { it.second.lowercase() }
+
+                // Add buttons for sorted categories
+                for ((categoryId, categoryName, categoryType) in categories) {
+                    val button = Button(requireContext())
+                    button.text = categoryName
+                    button.layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        setMargins(8, 8, 8, 8)
+                    }
+
+                    button.setOnClickListener {
+                        selectedCategoryId = categoryId
+                        selectedCategoryName = categoryName
+                        selectedCategoryType = categoryType
+                        txtSelectedCategory.text = categoryName
+                    }
+
+                    layoutCategoryButtons.addView(button)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context, "Failed to load categories", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun saveBudgetToFirebase() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val categoryName = selectedCategoryName
+        val categoryType = selectedCategoryType
+        val amount = seekBar.progress
+
+        if (categoryName.isNullOrEmpty()) {
+            Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dbRef = FirebaseDatabase.getInstance()
+            .getReference("users")
+            .child(userId)
+            .child("budgets")
+
+        val budgetId = dbRef.push().key ?: return
+        val budgetData = mapOf(
+            "category" to categoryName,
+            "amount" to amount
+        )
+
+        // Check if a budget for this category already exists
+        dbRef.orderByChild("category").equalTo(categoryName)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        Toast.makeText(context, "Budget for this category already exists.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val budgetId = dbRef.push().key ?: return
+                        val budgetData = mapOf(
+                            "id" to budgetId,
+                            "category" to categoryName,
+                            "categoryType" to categoryType,
+                            "amount" to amount
+                        )
+
+                        dbRef.child(budgetId).setValue(budgetData)
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Budget set successfully", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Failed to save budget", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(context, "Error accessing database", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
     override fun onStart() {
         super.onStart()
         
-        // Show tutorial overlay for this page only once
         val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val hasSeenSetBudgetTut = prefs.getBoolean("hasSeenSetBudgetTut", false)
+        val hasSeenCalcTut = prefs.getBoolean("hasSeenCalcTut", false)
         
-        if (!hasSeenSetBudgetTut) {
-            Log.d(TAG, "onStart: Launching Set Budget tutorial overlay")
-            
-            // Create and show the tutorial fragment with the desired image and text
+        if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
-                R.drawable.lacalm1, // replace with an appropriate drawable
-                "On this screen, set your monthly budget per category.\n\n" +
-                        "1. Tap a category button (e.g., ‘Food’, ‘Entertainment’).\n" +
-                        "2. Adjust the slider to set a minimum spend (snap to multiples of 10).\n" +
-                        "3. If you want to customize the slider’s maximum, enter a value above and tap ‘Set Max’.  \n" +
-                        "4. Finally, tap ‘Set’ to save this category’s budget to your account."
+                R.drawable.anti, // Replace with a valid drawable in your project
+                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times/n" +
+                        "You can set your budgets here./n" +
+                        "Select a category/n" + "Set an amount/n" +
+                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'/n" +
+                        "• Tap OK to begin!"
             )
             
-            // Add the overlay on top of this fragment's container
             parentFragmentManager.beginTransaction()
-                .add(R.id.fragmentContainerView, tutorialOverlay)
+                .add(R.id.fragmentContainerView, tutorialOverlay) // ensure this ID matches your layout
                 .commit()
             
-            // Mark tutorial as seen so it doesn’t show again
-            prefs.edit()
-                .putBoolean("hasSeenSetBudgetTut", true)
-                .apply()
+            prefs.edit().putBoolean("hasSeenCalcTut", true).apply()
         }
     }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
 }

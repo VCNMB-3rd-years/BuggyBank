@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.viewpager2)
     // implementation(project(":app"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -89,5 +90,11 @@ dependencies {
     //implementation for currency conversion
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    
+    
+    // Also add the dependencies for the Credential Manager libraries and specify their versions
+    implementation(libs.androidx.credentials.v130)
+    implementation(libs.androidx.credentials.play.services.auth.v130)
+    implementation(libs.googleid)
 
 }

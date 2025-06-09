@@ -1,6 +1,9 @@
 package vcmsa.projects.buggybank
 
+import android.content.ContentValues
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.DialogFragment
@@ -90,5 +93,36 @@ class CurrencyConverterFragment : Fragment() {
         }
 
         return view
+    }
+    override fun onStart() {
+        super.onStart()
+        
+        // Show this fragment's tutorial overlay once per install/user
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCreateCategoryTut = prefs.getBoolean("hasSeenCreateCategoryTut", false)
+        
+        if (!hasSeenCreateCategoryTut) {
+            Log.d(ContentValues.TAG, "onStart: Launching tutorial overlay")
+            
+            // Build the tutorial page explaining this screen's controls
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.butterfly,  // Replace with your appropriate drawable
+                // Explanatory text for creating a category:
+                "This is a Currency Converter screen./n" +
+                        "1. Enter the needed information into the fields./n" +
+                        "2. press 'Convert'./n" +
+                        "You can press reset to clear the fields./n"
+            )
+            
+            // Overlay the tutorial on top of the existing fragmentContainerView
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay)
+                .commit()
+            
+            // Mark as seen so it won't show next time
+            prefs.edit()
+                .putBoolean("hasSeenCreateCategoryTut", true)
+                .apply()
+        }
     }
 }

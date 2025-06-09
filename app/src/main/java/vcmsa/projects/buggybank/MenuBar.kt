@@ -8,7 +8,9 @@ import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.Toast
@@ -40,20 +42,22 @@ private val FragTransactionRecords = TransactionRecords()
 private val FragSetABudget = SetBudgetFragment()
 private val FragCalculator = CalculatorFragment()
 private val FragCurrencyConvertor = CurrencyConverterFragment()
+private val FragProf = FragProfile()
 //private val FragSettings = SettingsFragment()
 private val FragLogout = logoutFragment()
-private val FragBudgetBuddyWelcome = BudgetBuddyWelcomeFragment()
+
+private val FragProgress = BudgetProgressBar()
 
 
 class MenuBar : AppCompatActivity() {
-    
+
     lateinit var navToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_menubar)
-        
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.menu)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -82,14 +86,14 @@ class MenuBar : AppCompatActivity() {
 
         sideNavView.bringToFront()
         drawerLayout.requestLayout()
-        
-        //Bottom menu bar nav code
+
+//Bottom menu bar nav code
         val bottomBar = findViewById<BottomNavigationView>(R.id.NavBar)
 
         // navigation for bottom nav bar
         bottomBar.setOnItemSelectedListener {
             when (it.itemId) {
-                
+
                 R.id.ic_home -> {
                     val fadeOut = AlphaAnimation(1f, 0f).apply {
                         duration = 150
@@ -123,22 +127,22 @@ class MenuBar : AppCompatActivity() {
                     showPopUp.show(supportFragmentManager, "showPopUp")
                 }
 
-                    R.id.ic_transactions -> {
-                        val fadeOut = AlphaAnimation(1f, 0f).apply {
-                            duration = 150
-                            fillAfter = true
-                        }
-                        val fadeIn = AlphaAnimation(0f, 1f).apply {
-                            duration = 150
-                            fillAfter = true
-                            startOffset = 150
-                        }
-                        FragTransactionRecords.view?.startAnimation(fadeOut)
-                        FragTransactionRecords.view?.postDelayed({ FragTransactionRecords.view?.startAnimation(fadeIn) }, 150)
-                        replaceFrag(FragTransactionRecords)
+                R.id.ic_transactions -> {
+                    val fadeOut = AlphaAnimation(1f, 0f).apply {
+                        duration = 150
+                        fillAfter = true
                     }
-                    R.id.ic_trophies -> Toast.makeText(this, "Trophies coming soon", Toast.LENGTH_LONG).show()
+                    val fadeIn = AlphaAnimation(0f, 1f).apply {
+                        duration = 150
+                        fillAfter = true
+                        startOffset = 150
+                    }
+                    FragTransactionRecords.view?.startAnimation(fadeOut)
+                    FragTransactionRecords.view?.postDelayed({ FragTransactionRecords.view?.startAnimation(fadeIn) }, 150)
+                    replaceFrag(FragTransactionRecords)
                 }
+                R.id.ic_trophies -> Toast.makeText(this, "Trophies coming soon", Toast.LENGTH_LONG).show()
+            }
 
             true
         }
@@ -181,7 +185,7 @@ class MenuBar : AppCompatActivity() {
                         FragReport.view?.postDelayed({ FragReport.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragReport)
                     }
-                    R.id.is_budgetBuddy -> {
+                    R.id.is_progress -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
                             duration = 150
                             fillAfter = true
@@ -191,10 +195,11 @@ class MenuBar : AppCompatActivity() {
                             fillAfter = true
                             startOffset = 150
                         }
-                        FragReport.view?.startAnimation(fadeOut)
-                        FragReport.view?.postDelayed({ FragReport.view?.startAnimation(fadeIn) }, 150)
-                        replaceFrag(FragBudgetBuddyWelcome)
+                        FragCalculator.view?.startAnimation(fadeOut)
+                        FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
+                        replaceFrag(FragProgress)
                     }
+
                     R.id.is_calculator -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
                             duration = 150
@@ -208,6 +213,20 @@ class MenuBar : AppCompatActivity() {
                         FragCalculator.view?.startAnimation(fadeOut)
                         FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragCalculator)
+                  }
+                    R.id.is_Profile -> {
+                        val fadeOut = AlphaAnimation(1f, 0f).apply {
+                            duration = 150
+                            fillAfter = true
+                        }
+                        val fadeIn = AlphaAnimation(0f, 1f).apply {
+                            duration = 150
+                            fillAfter = true
+                            startOffset = 150
+                        }
+                        FragProf.view?.startAnimation(fadeOut)
+                        FragProf.view?.postDelayed({ FragProf.view?.startAnimation(fadeIn) }, 150)
+                        replaceFrag(FragProf)
                     }
                     R.id.is_currencyConvertor -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
@@ -223,29 +242,28 @@ class MenuBar : AppCompatActivity() {
                         FragCurrencyConvertor.view?.postDelayed({ FragCurrencyConvertor.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragCurrencyConvertor)
                     }
-                    R.id.is_switchAccount -> Toast.makeText(this, "Switch account coming soon", Toast.LENGTH_LONG).show()
-                    R.id.is_budgetBuddy -> Toast.makeText(this, "Budget buddy coming soon", Toast.LENGTH_LONG).show()
-                    R.id.is_logut -> {
-                        
-                        
-                        val fadeOut = AlphaAnimation(1f, 0f).apply {
-                            duration = 150
-                            fillAfter = true
-                        }
-                        val fadeIn = AlphaAnimation(0f, 1f).apply {
-                            duration = 150
-                            fillAfter = true
-                            startOffset = 150
-                        }
-                        FragLogout.view?.startAnimation(fadeOut)
-                        FragLogout.view?.postDelayed({ FragLogout.view?.startAnimation(fadeIn) }, 150)
-                        val showPopUp = FragLogout
-                        showPopUp.show(supportFragmentManager,"showPopUp")
-                        replaceFrag(FragLogout)
+
+                R.id.is_logut -> {
+
+
+                    val fadeOut = AlphaAnimation(1f, 0f).apply {
+                        duration = 150
+                        fillAfter = true
                     }
+                    val fadeIn = AlphaAnimation(0f, 1f).apply {
+                        duration = 150
+                        fillAfter = true
+                        startOffset = 150
+                    }
+                    FragLogout.view?.startAnimation(fadeOut)
+                    FragLogout.view?.postDelayed({ FragLogout.view?.startAnimation(fadeIn) }, 150)
+                    val showPopUp = FragLogout
+                    showPopUp.show(supportFragmentManager,"showPopUp")
+                    replaceFrag(FragLogout)
                 }
-                drawerLayout.closeDrawer(GravityCompat.START)
-                true
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
 
         }
 
@@ -295,13 +313,13 @@ class MenuBar : AppCompatActivity() {
     private fun replaceFrag(fragment: Fragment) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
 
-        //ensures that we don't load the same page multiple times and filling the backstack with the same page
+//ensures that we don't load the same page multiple times and filling the backstack with the same page
         if (currentFragment != null && currentFragment::class == fragment::class) return
 
         val transaction = supportFragmentManager.beginTransaction()
         lifecycleScope.launch {
             transaction.replace(R.id.fragmentContainerView, fragment)
-                .addToBackStack(null) // Adds new  page to the back stack
+                .addToBackStack(null) // Adds new page to the back stack
                 .commit()
         }
 
@@ -327,7 +345,7 @@ class MenuBar : AppCompatActivity() {
         var y = 30f
         canvas.drawText("BuggyBank Expense Report", 10f, y, paint)
         y += 20f
-        //loop each transaction within db
+//loop each transaction within db
         transactions.forEach {
             canvas.drawText(
                 "${it.date}: ${it.description} - R${it.amount}",
@@ -371,4 +389,3 @@ class MenuBar : AppCompatActivity() {
         }
     }
 }
-

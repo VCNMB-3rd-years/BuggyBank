@@ -8,4 +8,13 @@
         <item name="android:background">@drawable/bg_category_chip</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
+
+    <style name="RoundedCorner" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+<style name= "CustomFont">
+        <item name="android:typeface">normal</item>
+        <item name="android:fontFamily">@font/chakra_petch</item>
+    </style>
 </resources>

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/is_Profile"
+        android:icon="@drawable/outline_account_circle_24"
+        android:title="Profile"
+        />
+
+    <item
         android:id="@+id/is_setABudget"
         android:icon="@drawable/baseline_edit_note_24"
         android:title="Set A Budget"
@@ -12,19 +18,16 @@
         android:title="Reports"/>
 
     <item
-        android:id="@+id/is_budgetBuddy"
-        android:icon="@drawable/baseline_people_outline_24"
-        android:title="Budget Buddy"/>
-
-
+        android:id="@+id/is_progress"
+        android:icon="@drawable/rounded_home_24"
+        android:title="Budget Usage"
+        />
 
     <item
-        android:id="@+id/is_switchAccount"
-        android:icon="@drawable/rounded_sync_alt_24"
-        android:title="Swicth Account"
-       />
-
-
+        android:id="@+id/progressBar"
+        android:icon="@drawable/rounded_table_chart_view_24"
+        android:title="Current Progress"
+        />
 
     <item
         android:id="@+id/is_calculator"

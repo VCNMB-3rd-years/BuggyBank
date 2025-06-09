@@ -1,5 +1,7 @@
 package vcmsa.projects.buggybank
 
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
@@ -187,6 +189,36 @@ class ReportFragment : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(context, "Error saving PDF: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    override fun onStart() {
+        super.onStart()
+        
+        // Show this fragment's tutorial overlay once per install/user
+        val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val hasSeenCreateCategoryTut = prefs.getBoolean("hasSeenCreateCategoryTut", false)
+        
+        if (!hasSeenCreateCategoryTut) {
+            Log.d(ContentValues.TAG, "onStart: Launching tutorial overlay")
+            
+            // Build the tutorial page explaining this screen's controls
+            val tutorialOverlay = TutorialFragment.newInstance(
+                R.drawable.wap,  // Replace with your appropriate drawable
+                // Explanatory text for creating a category:
+                "This the reports screen.../n" +
+                        "You can check and download your reports here./n" +
+                        "You also filter your reports here/n"
+            )
+            
+            // Overlay the tutorial on top of the existing fragmentContainerView
+            parentFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainerView, tutorialOverlay)
+                .commit()
+            
+            // Mark as seen so it won't show next time
+            prefs.edit()
+                .putBoolean("hasSeenCreateCategoryTut", true)
+                .apply()
         }
     }
 
