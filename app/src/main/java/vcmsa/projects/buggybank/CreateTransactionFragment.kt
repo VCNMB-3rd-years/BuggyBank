@@ -88,8 +88,8 @@ class CreateTransactionFragment : Fragment() {
         val layoutStepThree = view.findViewById<LinearLayout>(R.id.layoutStepThree)
 
         //back to stepOne and stepTwo
-        val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
-        val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
+//        val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
+//        val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
 
         // Make date/time fields non-editable
         listOf(etDate, etStartTime, etEndTime).forEach {
@@ -173,17 +173,17 @@ class CreateTransactionFragment : Fragment() {
         val txtStepTwo = view.findViewById<TextView>(R.id.txtStepTwo)
         val txtStepThree = view.findViewById<TextView>(R.id.txtStepThree)
 
-        btnBackToOne.setOnClickListener {
-            scrollView.post {
-                scrollView.smoothScrollTo(0, txtStepOne.top)
-            }
-        }
-
-        btnBackToTwo.setOnClickListener {
-            scrollView.post {
-                scrollView.smoothScrollTo(0, txtStepTwo.top)
-            }
-        }
+//        btnBackToOne.setOnClickListener {
+//            scrollView.post {
+//                scrollView.smoothScrollTo(0, txtStepOne.top)
+//            }
+//        }
+//
+//        btnBackToTwo.setOnClickListener {
+//            scrollView.post {
+//                scrollView.smoothScrollTo(0, txtStepTwo.top)
+//            }
+//        }
 
         btnNextToTwo.setOnClickListener {
             val titleText = etTitle.text.toString()
