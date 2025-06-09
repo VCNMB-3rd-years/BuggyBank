@@ -25,7 +25,7 @@
         android:id="@+id/tvReportHeading"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="120dp"
 
         android:fontFamily="@font/chakra_petch_bold"
         android:gravity="center_horizontal"
@@ -35,14 +35,15 @@
         android:textSize="29sp"
         app:layout_constraintBottom_toTopOf="@+id/rvTransactions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/btnDownloadPDF"
-        android:layout_width="57dp"
-        android:layout_height="62dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_download_24"
         app:layout_constraintBottom_toTopOf="@+id/rvTransactions"

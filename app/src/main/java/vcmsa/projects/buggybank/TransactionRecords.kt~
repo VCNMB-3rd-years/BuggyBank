@@ -329,9 +329,9 @@ class TransactionRecords : Fragment() {
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.wap, // Replace with a valid drawable in your project
-                "Check out your transactions.\n" + "You can filter by date range and category.\n" +
-                        "Also you can search for specific records.\n" +
-                        "You can edit and delete transactions.\n" +
+                "Check out your transactions./n" + "You can filter by date range and category./n" +
+                        "Also you can search for specific records./n" +
+                        "You can edit and delete transactions./n" +
                         "• Tap OK to begin!"
             )
             

@@ -185,10 +185,10 @@ class SetBudgetFragment : Fragment() {
         if (!hasSeenCalcTut) {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.anti, // Replace with a valid drawable in your project
-                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times/n" +
-                        "You can set your budgets here./n" +
-                        "Select a category/n" + "Set an amount/n" +
-                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'/n" +
+                "i remember my mother telling me 'Their is Mac Donald's at the Colony' haa good times\n" +
+                        "You can set your budgets here.\n" +
+                        "Select a category/n" + "Set an amount\n" +
+                        "You define the exact amount to allocate by dragging the slider and clicking 'Define'\n" +
                         "• Tap OK to begin!"
             )
             

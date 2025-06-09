@@ -14,26 +14,30 @@
 
         <TextView
             android:id="@+id/SortCategory"
-            android:layout_width="51dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/filter_button"
-            android:scaleX="-1"
 
+            android:scaleX="-1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.408" />
+            app:layout_constraintVertical_bias="0.376" />
 
         <TextView
             android:id="@+id/txtTimePeriod"
-            android:layout_width="250dp"
-            android:layout_height="54dp"
-            android:background="@drawable/vector_textbox"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
             android:clickable="true"
             android:fontFamily="@font/chakra_petch_bold"
             android:gravity="center"
             android:hint="Month"
+            android:textColor="@color/black"
+            app:strokeColor="#283D36"
+            app:strokeWidth="3dp"
             android:textSize="24sp"
+            android:background="@drawable/bg_category_chip"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
@@ -101,6 +105,7 @@
             android:layout_width="367dp"
             android:layout_height="340dp"
             android:scrollbars="vertical"
+            android:background="@drawable/bg_dashed_border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.545"

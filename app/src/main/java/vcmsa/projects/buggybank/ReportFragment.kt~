@@ -207,7 +207,6 @@ class ReportFragment : Fragment() {
                 // Explanatory text for creating a category:
                 "This the reports screen.../n" +
                         "You can check and download your reports here./n" +
-                        "Enter the needed information into the fields./n" +
                         "You also filter your reports here/n"
             )
             

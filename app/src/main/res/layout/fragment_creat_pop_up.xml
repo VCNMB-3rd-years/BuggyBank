@@ -10,6 +10,7 @@
     android:layout_gravity="center"
     tools:context=".CreatPopUpFragment">
 
+
     <Button
         android:id="@+id/btnCreateCategory"
         android:layout_width="250dp"

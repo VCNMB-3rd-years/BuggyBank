@@ -64,12 +64,13 @@ class AnalysisFragment : Fragment() {
             val tutorialOverlay = TutorialFragment.newInstance(
                 R.drawable.butterfly, // replace with an appropriate drawable for analysis
                 // Explanatory text for Analysis page:
-                "This is the Analysis screen:\n\n" +
+                "This is the Analysis screen:\n" +
                         "• The bar chart above shows your transactions grouped by title.\n" +
                         "• Below, you’ll see total Expenses, total Income, and your highest-spend category.\n" +
                         "• Use this overview to track where most of your money is going.\n" +
                         "• Tap OK to continue."
             )
+            
             
             // Overlay it on top of the current fragmentContainerView
             parentFragmentManager.beginTransaction()

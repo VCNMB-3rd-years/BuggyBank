@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordActivity : AppCompatActivity() {
-
     private lateinit var auth: FirebaseAuth
     private lateinit var txtEmailAddress: EditText
     private lateinit var btnSubmit: View
