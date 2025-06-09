@@ -34,6 +34,7 @@ gson = "2.10.1"
 firebaseStorageKtx = "21.0.1"
 firebaseStorage = "21.0.2"
 firebaseFirestoreKtx = "25.1.4"
+viewpager2 = "1.1.0"
 
 
 [libraries]
@@ -75,6 +76,7 @@ converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", ve
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

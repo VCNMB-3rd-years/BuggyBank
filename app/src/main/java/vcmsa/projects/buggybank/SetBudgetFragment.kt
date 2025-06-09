@@ -2,6 +2,7 @@ package vcmsa.projects.buggybank
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -33,7 +34,7 @@ class SetBudgetFragment : Fragment() {
         btnSet = view.findViewById(R.id.btnSet)
         layoutCategoryButtons = view.findViewById(R.id.layoutCategoryButtons)
 
-        // 🔽 Add this new block here
+        // Add this new block here
         val etMaxValue: EditText = view.findViewById(R.id.etMaxValue)
         val btnSetMax: Button = view.findViewById(R.id.btnSetMax)
 
@@ -59,7 +60,11 @@ class SetBudgetFragment : Fragment() {
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
 
-        btnSet.setOnClickListener { saveBudgetToFirebase() }
+        btnSet.setOnClickListener {
+            saveBudgetToFirebase()
+            etMaxValue.text.clear()
+            seekBar.progress =0
+        }
 
         loadCategoriesFromFirebase()
 
