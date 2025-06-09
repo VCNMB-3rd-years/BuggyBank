@@ -13,6 +13,8 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.io.File
@@ -21,7 +23,7 @@ import java.util.*
 
 class CreateTransactionFragment : Fragment() {
 
-    private lateinit var etTitle: EditText
+    private lateinit var etTitle: TextInputEditText
     private lateinit var spType: Spinner
     private lateinit var etAmount: EditText
     private lateinit var spCategory: Spinner
@@ -57,7 +59,6 @@ class CreateTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Bind views
         etTitle = view.findViewById(R.id.etTitle)
         spType = view.findViewById(R.id.spType)
         etAmount = view.findViewById(R.id.etAmount)
@@ -71,13 +72,11 @@ class CreateTransactionFragment : Fragment() {
         btnAddImage = view.findViewById(R.id.btnAddImage)
         imagePreview = view.findViewById(R.id.imagePreview)
 
-        // Make date/time fields non-editable
         listOf(etDate, etStartTime, etEndTime).forEach {
             it.isFocusable = false
             it.isClickable = true
         }
 
-        // Setup spinners
         spType.adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
@@ -92,14 +91,12 @@ class CreateTransactionFragment : Fragment() {
 
         loadCategoriesFromFirebase()
 
-        // Set listeners
         etDate.setOnClickListener { showDatePicker(etDate) }
         etStartTime.setOnClickListener { showTimePicker(etStartTime) }
         etEndTime.setOnClickListener { showTimePicker(etEndTime) }
         btnAddImage.setOnClickListener { showImagePickerDialog() }
         btnAdd.setOnClickListener { saveTransaction() }
     }
-
     private fun loadCategoriesFromFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val dbRef = FirebaseDatabase.getInstance()
@@ -250,7 +247,7 @@ class CreateTransactionFragment : Fragment() {
     }
 
     private fun clearForm() {
-        etTitle.text.clear()
+        etTitle.text?.clear()
         etAmount.text.clear()
         etDate.text.clear()
         etStartTime.text.clear()

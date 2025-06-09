@@ -12,6 +12,12 @@
         android:title="Reports"/>
 
     <item
+        android:id="@+id/is_progress"
+        android:icon="@drawable/rounded_table_chart_view_24"
+        android:title="Current Progress"
+        />
+
+    <item
         android:id="@+id/is_budgetBuddy"
         android:icon="@drawable/baseline_people_outline_24"
         android:title="Budget Buddy"/>

@@ -8,7 +8,9 @@ import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.Toast
@@ -43,6 +45,7 @@ private val FragCurrencyConvertor = CurrencyConverterFragment()
 //private val FragSettings = SettingsFragment()
 private val FragLogout = logoutFragment()
 private val FragBudgetBuddyWelcome = BudgetBuddyWelcomeFragment()
+private val FragProgress = ProgressBar()
 
 
 class MenuBar : AppCompatActivity() {
@@ -53,6 +56,10 @@ class MenuBar : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_menubar)
+
+        //debugging
+        val btnBackRaw = findViewById<View>(R.id.btnBack)
+        Log.d("DebugBtnBack", "Runtime type of btnBack: ${btnBackRaw::class.java.name}")
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.menu)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -181,6 +188,20 @@ class MenuBar : AppCompatActivity() {
                         FragReport.view?.postDelayed({ FragReport.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragReport)
                     }
+                    R.id.is_progress -> {
+                        val fadeOut = AlphaAnimation(1f, 0f).apply {
+                            duration = 150
+                            fillAfter = true
+                        }
+                        val fadeIn = AlphaAnimation(0f, 1f).apply {
+                            duration = 150
+                            fillAfter = true
+                            startOffset = 150
+                        }
+                        FragCalculator.view?.startAnimation(fadeOut)
+                        FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
+                        replaceFrag(FragProgress)
+                    }
                     R.id.is_budgetBuddy -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
                             duration = 150
@@ -224,7 +245,21 @@ class MenuBar : AppCompatActivity() {
                         replaceFrag(FragCurrencyConvertor)
                     }
                     R.id.is_switchAccount -> Toast.makeText(this, "Switch account coming soon", Toast.LENGTH_LONG).show()
-                    R.id.is_budgetBuddy -> Toast.makeText(this, "Budget buddy coming soon", Toast.LENGTH_LONG).show()
+                    R.id.is_budgetBuddy ->
+                    {
+                        val fadeOut = AlphaAnimation(1f, 0f).apply {
+                            duration = 150
+                            fillAfter = true
+                        }
+                        val fadeIn = AlphaAnimation(0f, 1f).apply {
+                            duration = 150
+                            fillAfter = true
+                            startOffset = 150
+                        }
+                        FragCurrencyConvertor.view?.startAnimation(fadeOut)
+                        FragCurrencyConvertor.view?.postDelayed({ FragCurrencyConvertor.view?.startAnimation(fadeIn) }, 150)
+                        replaceFrag(FragBudgetBuddyWelcome)}
+
                     R.id.is_logut -> {
                         
                         
