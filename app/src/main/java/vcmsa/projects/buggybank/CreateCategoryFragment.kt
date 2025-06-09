@@ -34,53 +34,53 @@ import com.google.firebase.database.ValueEventListener
 private const val TAG = "CreateCategoryFragment"
 
 class CreateCategoryFragment : Fragment() {
-
+    
     /**
      * The database reference for the categories.
      */
     private lateinit var database: DatabaseReference
-
+    
     /**
      * The RecyclerView for displaying the list of categories.
      */
     private lateinit var categoryRecyclerView: RecyclerView
-
+    
     /**
      * The EditText for inputting the name of the category.
      */
     private lateinit var categoryNameInput: EditText
-
+    
     /**
      * The RadioGroup for selecting whether the category is an expense or income.
      */
     private lateinit var typeRadioGroup: RadioGroup
-
+    
     /**
      * The RadioButton for selecting expense.
      */
     private lateinit var expenseRadioButton: RadioButton
-
+    
     /**
      * The RadioButton for selecting income.
      */
     private lateinit var incomeRadioButton: RadioButton
-
+    
     /**
      * The Button for adding the category.
      */
     private lateinit var addCategoryButton: Button
-
+    
     /**
      * The list of categories.
      */
     private val categoryList = mutableListOf<Category>()
-
-
+    
+    
     /**
      * The adapter for the RecyclerView.
      */
     private lateinit var categoryAdapter: CategoryAdapter
-
+    
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -121,42 +121,42 @@ class CreateCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
-
+        
         // Initialize user-scoped database reference
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         database = FirebaseDatabase.getInstance()
             .getReference("users").child(uid).child("categories")
-
+        
         // Setup RecyclerView and Adapter
         categoryAdapter = CategoryAdapter(categoryList,
             onEdit = { category -> showEditDialog(category) },
             onDelete = { category -> deleteCategory(category) }
         )
-
+        
         categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         categoryRecyclerView.adapter = categoryAdapter
-
+        
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean = false
-
+            
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val category = categoryAdapter.getItemAt(position)
-
+                
                 val uid = FirebaseAuth.getInstance().currentUser?.uid
                 if (uid == null) {
                     Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
                     categoryAdapter.notifyItemChanged(position)
                     return
                 }
-
+                
                 val transactionsRef = FirebaseDatabase.getInstance()
                     .getReference("users").child(uid).child("transactions")
-
+                
                 // Check if any transaction uses this category
                 transactionsRef.orderByChild("category").equalTo(category.name)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -179,7 +179,7 @@ class CreateCategoryFragment : Fragment() {
                                     .show()
                             }
                         }
-
+                        
                         override fun onCancelled(error: DatabaseError) {
                             Toast.makeText(requireContext(), "Error checking transactions", Toast.LENGTH_SHORT).show()
                             categoryAdapter.notifyItemChanged(position)
@@ -188,8 +188,8 @@ class CreateCategoryFragment : Fragment() {
             }
         })
         itemTouchHelper.attachToRecyclerView(categoryRecyclerView)
-
-
+        
+        
         // Load categories from Firebase
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -200,25 +200,25 @@ class CreateCategoryFragment : Fragment() {
                     val type = child.child("type").getValue(String::class.java) ?: continue
                     categoryList.add(Category(id, name, type))
                 }
-
+                
                 // 🔽 Sort alphabetically by name (case-insensitive)
                 categoryList.sortBy { it.name.lowercase() }
-
+                
                 categoryAdapter.notifyDataSetChanged()
             }
-
+            
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
             }
         })
-
-
+        
+        
         // Add category on button click
         addCategoryButton.setOnClickListener { addCategory() }
     }
-
-
-
+    
+    
+    
     /**
      * Adds a new category to the database.
      */
@@ -229,7 +229,7 @@ class CreateCategoryFragment : Fragment() {
             Toast.makeText(requireContext(), "Please enter a category name.", Toast.LENGTH_SHORT).show()
             return
         }
-
+        
         val type = when {
             expenseRadioButton.isChecked -> "Expense"
             incomeRadioButton.isChecked -> "Income"
@@ -238,16 +238,16 @@ class CreateCategoryFragment : Fragment() {
                 return
             }
         }
-
+        
         val user = FirebaseAuth.getInstance().currentUser ?: run {
             Log.e(TAG, "No user logged in")
             return
         }
-
+        
         // Check for duplicates
         database.orderByChild("name").equalTo(name).get().addOnSuccessListener { snapshot ->
             var duplicateFound = false
-
+            
             snapshot.children.forEach { child ->
                 val existingType = child.child("type").getValue(String::class.java)
                 if (existingType == type) {
@@ -255,19 +255,19 @@ class CreateCategoryFragment : Fragment() {
                     return@forEach
                 }
             }
-
+            
             if (duplicateFound) {
                 Toast.makeText(requireContext(), "This category already exists.", Toast.LENGTH_SHORT).show()
                 return@addOnSuccessListener
             }
-
+            
             // No duplicate, proceed to add
             val categoryData = mapOf("name" to name, "type" to type)
             database.push().setValue(categoryData)
                 .addOnSuccessListener {
                     Log.d(TAG, "Saved: $categoryData")
                     Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
-
+                    
                     // No need to manually add to categoryList — Firebase listener will do it
                     categoryNameInput.text.clear()
                     typeRadioGroup.clearCheck()
@@ -281,17 +281,17 @@ class CreateCategoryFragment : Fragment() {
             Toast.makeText(requireContext(), "Error checking for duplicates", Toast.LENGTH_SHORT).show()
         }
     }
-
+    
     private fun showEditDialog(category: Category) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_category, null)
         val nameInput = dialogView.findViewById<EditText>(R.id.editCategoryNameInput)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.editTypeRadioGroup)
         val incomeRadio = dialogView.findViewById<RadioButton>(R.id.editIncomeRadioButton)
         val expenseRadio = dialogView.findViewById<RadioButton>(R.id.editExpenseRadioButton)
-
+        
         nameInput.setText(category.name)
         if (category.type == "Income") incomeRadio.isChecked = true else expenseRadio.isChecked = true
-
+        
         AlertDialog.Builder(requireContext())
             .setTitle("Edit Category")
             .setView(dialogView)
@@ -302,17 +302,17 @@ class CreateCategoryFragment : Fragment() {
                     expenseRadio.isChecked -> "Expense"
                     else -> ""
                 }
-
+                
                 if (newName.isEmpty() || newType.isEmpty()) {
                     Toast.makeText(requireContext(), "Please enter valid data", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
-
+                
                 val updatedCategory = mapOf("name" to newName, "type" to newType)
                 val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
                 val categoryRef = FirebaseDatabase.getInstance()
                     .getReference("users").child(uid).child("categories").child(category.id)
-
+                
                 categoryRef.updateChildren(updatedCategory)
                     .addOnSuccessListener {
                         Toast.makeText(requireContext(), "Category updated", Toast.LENGTH_SHORT).show()
@@ -324,14 +324,14 @@ class CreateCategoryFragment : Fragment() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
-
+    
+    
     private fun deleteCategory(category: Category) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-
+        
         val transactionsRef = FirebaseDatabase.getInstance()
             .getReference("users").child(uid).child("transactions")
-
+        
         // Check if category is in use
         transactionsRef.orderByChild("category").equalTo(category.name)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -347,7 +347,7 @@ class CreateCategoryFragment : Fragment() {
                             .setPositiveButton("Delete") { _, _ ->
                                 val categoryRef = FirebaseDatabase.getInstance()
                                     .getReference("users").child(uid).child("categories").child(category.id)
-
+                                
                                 categoryRef.removeValue()
                                     .addOnSuccessListener {
                                         Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
@@ -361,7 +361,7 @@ class CreateCategoryFragment : Fragment() {
                             .show()
                     }
                 }
-
+                
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(requireContext(), "Error checking transactions", Toast.LENGTH_SHORT).show()
                     Log.e(TAG, "Database error", error.toException())

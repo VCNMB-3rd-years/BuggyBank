@@ -564,6 +564,3 @@ class CreateTransactionFragment : Fragment() {
         }
     }
 }
-
-
-

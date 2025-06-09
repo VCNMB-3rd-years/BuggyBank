@@ -45,7 +45,6 @@ private val FragCurrencyConvertor = CurrencyConverterFragment()
 private val FragProf = FragProfile()
 //private val FragSettings = SettingsFragment()
 private val FragLogout = logoutFragment()
-
 private val FragProgress = BudgetProgressBar()
 
 
@@ -242,10 +241,7 @@ class MenuBar : AppCompatActivity() {
                         FragCurrencyConvertor.view?.postDelayed({ FragCurrencyConvertor.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragCurrencyConvertor)
                     }
-
                 R.id.is_logut -> {
-
-
                     val fadeOut = AlphaAnimation(1f, 0f).apply {
                         duration = 150
                         fillAfter = true

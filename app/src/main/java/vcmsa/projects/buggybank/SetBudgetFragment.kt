@@ -2,8 +2,13 @@ package vcmsa.projects.buggybank
 
 import android.content.Context
 import android.os.Bundle
+
+import android.os.Handler
+import android.os.Looper
+
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -34,7 +39,8 @@ class SetBudgetFragment : Fragment() {
         btnSet = view.findViewById(R.id.btnSet)
         layoutCategoryButtons = view.findViewById(R.id.layoutCategoryButtons)
 
-        val maxValueEditText = view.findViewById<TextInputEditText>(R.id.etMaxValue)
+        val maxValueEditText = view.findViewById<TextInputEditText>(R.id.etMaxValueInput)
+
         val value = maxValueEditText.text.toString()
         val btnSetMax: Button = view.findViewById(R.id.btnSetMax)
 
