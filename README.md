@@ -32,6 +32,7 @@
 
 ### 🧩 Categories & Budgets
 
+![Set A Budget Page](./SETBUDGET.png)
 * Create custom **Income** and **Expense** categories
 * Edit & 🗑 Delete categories (blocked if in use)
 * Set and manage category-specific budgets with duplicate checks and overspend warnings
