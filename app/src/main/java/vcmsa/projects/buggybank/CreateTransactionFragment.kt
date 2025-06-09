@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -72,6 +73,18 @@ class CreateTransactionFragment : Fragment() {
         btnAddImage = view.findViewById(R.id.btnAddImage)
         imagePreview = view.findViewById(R.id.imagePreview)
 
+        //for stepTwo's input prevention
+        val btnNextToTwo = view.findViewById<Button>(R.id.btnNextToTwo)
+        val layoutStepTwo = view.findViewById<LinearLayout>(R.id.layoutStepTwo)
+
+        //for stepThree's input prevention
+        val btnNextToThree = view.findViewById<Button>(R.id.btnNextToThree)
+        val layoutStepThree = view.findViewById<LinearLayout>(R.id.layoutStepThree)
+
+        //back to stepOne and stepTwo
+        val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
+        val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
+
         listOf(etDate, etStartTime, etEndTime).forEach {
             it.isFocusable = false
             it.isClickable = true
@@ -96,6 +109,147 @@ class CreateTransactionFragment : Fragment() {
         etEndTime.setOnClickListener { showTimePicker(etEndTime) }
         btnAddImage.setOnClickListener { showImagePickerDialog() }
         btnAdd.setOnClickListener { saveTransaction() }
+
+        val scrollView = view.findViewById<ScrollView>(R.id.scrollView)
+        val txtStepOne = view.findViewById<TextView>(R.id.txtStepOne)
+        val txtStepTwo = view.findViewById<TextView>(R.id.txtStepTwo)
+        val txtStepThree = view.findViewById<TextView>(R.id.txtStepThree)
+
+        btnBackToOne.setOnClickListener {
+            scrollView.post {
+                scrollView.smoothScrollTo(0, txtStepOne.top)
+            }
+        }
+
+        btnBackToTwo.setOnClickListener {
+            scrollView.post {
+                scrollView.smoothScrollTo(0, txtStepTwo.top)
+            }
+        }
+
+        btnNextToTwo.setOnClickListener {
+            val titleText = etTitle.text.toString()
+            val amountText = etAmount.text.toString()
+            val typePosition = spType.selectedItemPosition
+            val categoryPosition = spCategory.selectedItemPosition
+
+            var isValid = true
+
+            // Colors
+            val defaultColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
+            val errorColor = ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
+
+            // Reset to default first
+            etTitle.background.setTint(defaultColor)
+            etAmount.background.setTint(defaultColor)
+            spType.background.setTint(defaultColor)
+            spCategory.background.setTint(defaultColor)
+
+            // Validate each field
+            if (titleText.isEmpty()) {
+                etTitle.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Title field is empty", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (amountText.isEmpty()) {
+                etAmount.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Amount field is empty", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (typePosition == 0) {
+                spType.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Please select a transaction type", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (categoryPosition == 0) {
+                spCategory.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Please select a category", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            // If all fields valid, show next step
+            if (isValid) {
+                layoutStepTwo.visibility = View.VISIBLE
+                layoutStepTwo.alpha = 1f
+                layoutStepTwo.isEnabled = true
+                layoutStepTwo.isClickable = true
+                layoutStepTwo.isFocusable = true
+
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, txtStepTwo.top)
+                }
+            } else {
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, txtStepOne.top)
+                }
+            }
+        }
+
+
+
+        //these step is optional
+        btnNextToThree.setOnClickListener {
+            val dateText = etDate.text.toString()
+            val startTimeText = etStartTime.text.toString()
+            val endTimeText = etEndTime.text.toString()
+            val paymentSelected = spPayment.selectedItemPosition != 0
+
+            var isValid = true
+
+            // Reset background tints to default (optional grey)
+            val defaultColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
+            val errorColor = ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
+
+            etDate.background.setTint(defaultColor)
+            etStartTime.background.setTint(defaultColor)
+            etEndTime.background.setTint(defaultColor)
+            spPayment.background.setTint(defaultColor)
+
+            // Validate each field and apply red tint if invalid
+            if (dateText.isEmpty()) {
+                etDate.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Date field is empty", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (startTimeText.isEmpty()) {
+                etStartTime.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Start Time field is empty", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (endTimeText.isEmpty()) {
+                etEndTime.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "End Time field is empty", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (!paymentSelected) {
+                spPayment.background.setTint(errorColor)
+                Toast.makeText(requireContext(), "Please select a payment method", Toast.LENGTH_SHORT).show()
+                isValid = false
+            }
+
+            if (isValid) {
+                layoutStepThree.visibility = View.VISIBLE
+                layoutStepThree.alpha = 1f
+                layoutStepThree.isEnabled = true
+                layoutStepThree.isClickable = true
+                layoutStepThree.isFocusable = true
+
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, txtStepThree.top)
+                }
+            } else {
+                scrollView.post {
+                    scrollView.smoothScrollTo(0, txtStepTwo.top)
+                }
+            }
+        }
+
     }
     private fun loadCategoriesFromFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return

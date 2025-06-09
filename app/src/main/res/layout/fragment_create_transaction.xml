@@ -13,23 +13,32 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:orientation="vertical">
 
             <!-- STEP ONE -->
+            <TextView
+                android:id="@+id/txtStepOne"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="STEP ONE"
+                android:textSize="26sp"
+                android:fontFamily="@font/chakra_petch_bold"
+                android:layout_marginTop="48dp"
+                android:layout_gravity="center"/>
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Title"
                 android:textSize="20sp"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="28dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout6"
@@ -107,7 +116,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/btnNextStep1"
+                android:id="@+id/btnNextToTwo"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Next"
@@ -115,15 +124,35 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/chakra_petch"
                 android:backgroundTint="@color/green"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="24dp"
+                android:layout_gravity="right"/>
 
             <!-- STEP TWO -->
+            <LinearLayout
+                android:id="@+id/layoutStepTwo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:alpha="0.4"
+                android:enabled="false"
+                android:clickable="false"
+                android:focusable="false">
+
+                <TextView
+                    android:id="@+id/txtStepTwo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STEP TWO"
+                    android:textSize="26sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/chakra_petch_bold"
+                    android:layout_marginTop="48dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
                 android:textSize="20sp"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="28dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -213,7 +242,7 @@
                 android:gravity="center_vertical" >  <!-- valid gravity -->
 
                 <Button
-                    android:id="@+id/btnBackStep"
+                    android:id="@+id/btnBackToOne"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -225,7 +254,7 @@
                     android:layout_marginEnd="8dp" />
 
                 <Button
-                    android:id="@+id/btnNext"
+                    android:id="@+id/btnNextToThree"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -236,9 +265,42 @@
                     android:backgroundTint="@color/green"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
-
+        </LinearLayout>
 
             <!-- STEP THREE -->
+            <LinearLayout
+                android:id="@+id/layoutStepThree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:alpha="0.4"
+                android:enabled="false"
+                android:clickable="false"
+                android:focusable="false">
+
+                <TextView
+                    android:id="@+id/txtStepThree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STEP THREE"
+                    android:textSize="26sp"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/chakra_petch_bold"
+                    android:layout_marginTop="48dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add photo"
+                    android:textSize="20sp"
+                    android:layout_marginTop="28dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Optional"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/chakra_petch_light"
+                    android:layout_marginTop="18dp" />
             <FrameLayout
                 android:id="@+id/btnAddImage"
                 android:layout_width="350dp"
@@ -246,8 +308,7 @@
                 android:background="@drawable/bg_dashed_border"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="12dp"
-                >
+                android:padding="12dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -280,8 +341,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="350dp"
-                android:layout_height="wrap_content"
-               >
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/editTextDescription"
@@ -312,6 +372,7 @@
                 android:backgroundTint="@color/green"
                  />
             <Button
+                android:id="@+id/BackToTwo"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Back"
@@ -319,8 +380,8 @@
                 android:textSize="20dp"
                 android:fontFamily="@font/chakra_petch"
                 android:backgroundTint="@color/dark_green"
-                android:onClick="onBack"
                 />
+        </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
