@@ -44,7 +44,6 @@ private val FragCalculator = CalculatorFragment()
 private val FragCurrencyConvertor = CurrencyConverterFragment()
 //private val FragSettings = SettingsFragment()
 private val FragLogout = logoutFragment()
-private val FragBudgetBuddyWelcome = BudgetBuddyWelcomeFragment()
 private val FragProgress = ProgressBar()
 
 
@@ -202,20 +201,7 @@ class MenuBar : AppCompatActivity() {
                         FragCalculator.view?.postDelayed({ FragCalculator.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragProgress)
                     }
-                    R.id.is_budgetBuddy -> {
-                        val fadeOut = AlphaAnimation(1f, 0f).apply {
-                            duration = 150
-                            fillAfter = true
-                        }
-                        val fadeIn = AlphaAnimation(0f, 1f).apply {
-                            duration = 150
-                            fillAfter = true
-                            startOffset = 150
-                        }
-                        FragReport.view?.startAnimation(fadeOut)
-                        FragReport.view?.postDelayed({ FragReport.view?.startAnimation(fadeIn) }, 150)
-                        replaceFrag(FragBudgetBuddyWelcome)
-                    }
+
                     R.id.is_calculator -> {
                         val fadeOut = AlphaAnimation(1f, 0f).apply {
                             duration = 150
@@ -244,21 +230,6 @@ class MenuBar : AppCompatActivity() {
                         FragCurrencyConvertor.view?.postDelayed({ FragCurrencyConvertor.view?.startAnimation(fadeIn) }, 150)
                         replaceFrag(FragCurrencyConvertor)
                     }
-                    R.id.is_switchAccount -> Toast.makeText(this, "Switch account coming soon", Toast.LENGTH_LONG).show()
-                    R.id.is_budgetBuddy ->
-                    {
-                        val fadeOut = AlphaAnimation(1f, 0f).apply {
-                            duration = 150
-                            fillAfter = true
-                        }
-                        val fadeIn = AlphaAnimation(0f, 1f).apply {
-                            duration = 150
-                            fillAfter = true
-                            startOffset = 150
-                        }
-                        FragCurrencyConvertor.view?.startAnimation(fadeOut)
-                        FragCurrencyConvertor.view?.postDelayed({ FragCurrencyConvertor.view?.startAnimation(fadeIn) }, 150)
-                        replaceFrag(FragBudgetBuddyWelcome)}
 
                     R.id.is_logut -> {
                         

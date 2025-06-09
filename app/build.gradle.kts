@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.viewpager2)
     // implementation(project(":app"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
