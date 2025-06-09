@@ -15,7 +15,7 @@
         android:id="@+id/Sign_in_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="336dp"
+        android:layout_marginTop="316dp"
         android:fontFamily="@font/chakra_petch_bold"
         android:text="Login"
 
@@ -26,7 +26,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/Signinemail"
@@ -134,5 +133,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.781"
         app:srcCompat="@drawable/logo2" />
+
+    <ImageView
+        android:id="@+id/btn_google"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="28dp"
+        android:labelFor="@id/Sign_in_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/googleg_standard_color_18"
+        tools:tooltipText="Sign in" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,32 +13,32 @@
         android:id="@+id/main_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="68dp"
 
+        android:fontFamily="@font/chakra_petch_bold"
         android:text="@string/Welcome_User"
         android:textAlignment="center"
-        android:fontFamily="@font/chakra_petch_bold"
         android:textAllCaps="true"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
-        android:layout_width="374dp"
+        android:layout_width="380dp"
         android:layout_height="210dp"
         android:background="@drawable/rectangle_1"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.368">
+        app:layout_constraintVertical_bias="0.28">
 
         <TextView
             android:id="@+id/wallet_title"
@@ -58,9 +58,9 @@
             android:id="@+id/walletTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="Wallet: R0.00"
             android:textSize="24sp"
-            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -73,13 +73,13 @@
             android:layout_marginStart="20dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:textAllCaps="true"
             android:backgroundTint="@color/dark_green"
             android:fontFamily="@font/chakra_petch_bold"
+            android:text="Add Transcation"
             android:textAlignment="center"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="15sp"
-            android:text="Add Transcation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/view_transition"
             app:layout_constraintStart_toStartOf="parent" />
@@ -91,18 +91,18 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:textAllCaps="true"
-            android:text="View Transaction"
             android:backgroundTint="@android:color/transparent"
-            app:strokeColor="#283D36"
-            app:strokeWidth="3dp"
             android:fontFamily="@font/chakra_petch_bold"
+            android:text="View Transaction"
             android:textAlignment="center"
+            android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/addTransaction" />
+            app:layout_constraintStart_toEndOf="@+id/addTransaction"
+            app:strokeColor="#283D36"
+            app:strokeWidth="3dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -114,10 +114,9 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.875">
+        app:layout_constraintVertical_bias="0.803">
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/statusBar"
@@ -138,8 +137,8 @@
             android:backgroundTint="@color/dark_green"
             android:fontFamily="@font/chakra_petch_bold"
             android:text="@string/ViewReport"
-            android:textAllCaps="true"
             android:textAlignment="center"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
