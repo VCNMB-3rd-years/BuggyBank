@@ -45,7 +45,7 @@ class MainPageFragment : Fragment() {
         chart = binding.statusBar
 
         // Greet user
-        db.getReference("users/$userId/username")
+        db.getReference("users/$userId/details/username")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 @SuppressLint("SetTextI18n")
                 override fun onDataChange(snapshot: DataSnapshot) {

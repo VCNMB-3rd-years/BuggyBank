@@ -13,6 +13,12 @@
 
     <item
         android:id="@+id/is_progress"
+        android:icon="@drawable/rounded_home_24"
+        android:title="Budget Usage"
+        />
+
+    <item
+        android:id="@+id/progressBar"
         android:icon="@drawable/rounded_table_chart_view_24"
         android:title="Current Progress"
         />
@@ -28,7 +34,7 @@
         android:id="@+id/is_switchAccount"
         android:icon="@drawable/rounded_sync_alt_24"
         android:title="Swicth Account"
-       />
+        />
 
 
 
