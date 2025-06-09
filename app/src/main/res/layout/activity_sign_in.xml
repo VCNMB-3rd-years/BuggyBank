@@ -15,7 +15,7 @@
         android:id="@+id/Sign_in_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="316dp"
+        android:layout_marginTop="224dp"
         android:fontFamily="@font/chakra_petch_bold"
         android:text="Login"
 
@@ -34,10 +34,10 @@
         android:hint="@string/email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.544">
+        app:layout_constraintVertical_bias="0.422">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/Sign_in_email"
@@ -54,10 +54,10 @@
         android:hint="@string/Password"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.658"
+        app:layout_constraintVertical_bias="0.543"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -80,28 +80,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.541"
+        app:layout_constraintHorizontal_bias="0.52"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.73" />
-
-    <Button
-        android:id="@+id/Sign_in_register"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:backgroundTint="@color/light_green"
-        android:fontFamily="@font/chakra_petch_bold"
-        android:text="@string/Register"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.071"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.864" />
+        app:layout_constraintVertical_bias="0.637" />
 
     <Button
         android:id="@+id/Sign_in_button"
@@ -116,10 +98,30 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.928"
+        app:layout_constraintHorizontal_bias="0.933"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.864" />
+        app:layout_constraintVertical_bias="0.74" />
+
+    <Button
+        android:id="@+id/Sign_in_register"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/chakra_petch_bold"
+        android:text="@string/Register"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.074"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.74"
+        app:strokeColor="#283D36"
+        app:strokeWidth="3dp" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -131,14 +133,14 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.781"
+        app:layout_constraintVertical_bias="0.693"
         app:srcCompat="@drawable/logo2" />
 
     <ImageView
         android:id="@+id/btn_google"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="24dp"
         android:labelFor="@id/Sign_in_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

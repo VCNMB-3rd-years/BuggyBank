@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpFragContainer"
-    android:layout_width="350dp"
-    android:layout_height="550dp"
+    android:layout_width="280dp"
+    android:layout_height="350dp"
     android:background="@drawable/popfrag"
     android:layout_gravity="center"
-    tools:context=".CreatPopUpFragment"
-    >
+    tools:context=".CreatPopUpFragment">
 
 
     <Button
         android:id="@+id/btnCreateTransaction"
         android:layout_width="250dp"
         android:layout_height="74dp"
-        android:layout_marginBottom="152dp"
+        android:layout_marginBottom="10sp"
         android:backgroundTint="@android:color/transparent"
         android:fontFamily="@font/chakra_petch_bold"
         android:text="Create transaction"
@@ -24,9 +23,10 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCreateCategory"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.717"
         app:strokeColor="#283D36"
         app:strokeWidth="3dp" />
 
@@ -34,17 +34,18 @@
         android:id="@+id/btnCreateCategory"
         android:layout_width="250dp"
         android:layout_height="74dp"
-        android:layout_marginTop="184dp"
+        android:layout_marginTop="60dp"
         android:backgroundTint="@android:color/transparent"
-        app:strokeColor="#283D36"
-        app:strokeWidth="3dp"
         android:fontFamily="@font/chakra_petch_bold"
         android:text="Create category"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#283D36"
+        app:strokeWidth="3dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
