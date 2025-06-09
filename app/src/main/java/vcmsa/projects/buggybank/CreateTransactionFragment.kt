@@ -14,17 +14,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateTransactionFragment : Fragment() {
 
-    private lateinit var etTitle: TextInputEditText
+    private lateinit var etTitle: EditText
     private lateinit var spType: Spinner
     private lateinit var etAmount: EditText
     private lateinit var spCategory: Spinner
@@ -60,6 +62,7 @@ class CreateTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Bind views
         etTitle = view.findViewById(R.id.etTitle)
         spType = view.findViewById(R.id.spType)
         etAmount = view.findViewById(R.id.etAmount)
@@ -85,25 +88,54 @@ class CreateTransactionFragment : Fragment() {
         val btnBackToOne = view.findViewById<Button>(R.id.btnBackToOne)
         val btnBackToTwo = view.findViewById<Button>(R.id.BackToTwo)
 
+        // Make date/time fields non-editable
         listOf(etDate, etStartTime, etEndTime).forEach {
             it.isFocusable = false
             it.isClickable = true
         }
 
-        spType.adapter = ArrayAdapter(
+        // Setup spinners
+        val types = listOf("Select", "Income", "Expense")
+        val typeAdapter = object : ArrayAdapter<String>(
             requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("Expense", "Income")
-        )
+            android.R.layout.simple_spinner_item,
+            types
+        ) {
+            override fun isEnabled(position: Int): Boolean = position != 0 // Disable "Select type"
 
-        spPayment.adapter = ArrayAdapter(
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                val textView = view as TextView
+                textView.setTextColor(if (position == 0) android.graphics.Color.GRAY else android.graphics.Color.BLACK)
+                return view
+            }
+        }
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spType.adapter = typeAdapter
+
+
+        val paymentOptions = listOf("Select", "Cash", "Credit Card", "Debit Card")
+        val paymentAdapter = object : ArrayAdapter<String>(
             requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            listOf("Cash", "Credit Card", "Debit Card")
-        )
+            android.R.layout.simple_spinner_item,
+            paymentOptions
+        ) {
+            override fun isEnabled(position: Int) = position != 0
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getDropDownView(position, convertView, parent)
+                (view as TextView).setTextColor(
+                    if (position == 0) android.graphics.Color.GRAY else android.graphics.Color.BLACK
+                )
+                return view
+            }
+        }
+        paymentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spPayment.adapter = paymentAdapter
+
 
         loadCategoriesFromFirebase()
 
+        // Set listeners
         etDate.setOnClickListener { showDatePicker(etDate) }
         etStartTime.setOnClickListener { showTimePicker(etStartTime) }
         etEndTime.setOnClickListener { showTimePicker(etEndTime) }
@@ -135,17 +167,17 @@ class CreateTransactionFragment : Fragment() {
 
             var isValid = true
 
-            // Colors
+// Colors
             val defaultColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
             val errorColor = ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
 
-            // Reset to default first
+// Reset to default first
             etTitle.background.setTint(defaultColor)
             etAmount.background.setTint(defaultColor)
             spType.background.setTint(defaultColor)
             spCategory.background.setTint(defaultColor)
 
-            // Validate each field
+// Validate each field
             if (titleText.isEmpty()) {
                 etTitle.background.setTint(errorColor)
                 Toast.makeText(requireContext(), "Title field is empty", Toast.LENGTH_SHORT).show()
@@ -170,7 +202,7 @@ class CreateTransactionFragment : Fragment() {
                 isValid = false
             }
 
-            // If all fields valid, show next step
+// If all fields valid, show next step
             if (isValid) {
                 layoutStepTwo.visibility = View.VISIBLE
                 layoutStepTwo.alpha = 1f
@@ -190,7 +222,7 @@ class CreateTransactionFragment : Fragment() {
 
 
 
-        //these step is optional
+//these step is optional
         btnNextToThree.setOnClickListener {
             val dateText = etDate.text.toString()
             val startTimeText = etStartTime.text.toString()
@@ -199,7 +231,7 @@ class CreateTransactionFragment : Fragment() {
 
             var isValid = true
 
-            // Reset background tints to default (optional grey)
+// Reset background tints to default (optional grey)
             val defaultColor = ContextCompat.getColor(requireContext(), android.R.color.darker_gray)
             val errorColor = ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
 
@@ -208,7 +240,7 @@ class CreateTransactionFragment : Fragment() {
             etEndTime.background.setTint(defaultColor)
             spPayment.background.setTint(defaultColor)
 
-            // Validate each field and apply red tint if invalid
+// Validate each field and apply red tint if invalid
             if (dateText.isEmpty()) {
                 etDate.background.setTint(errorColor)
                 Toast.makeText(requireContext(), "Date field is empty", Toast.LENGTH_SHORT).show()
@@ -249,8 +281,8 @@ class CreateTransactionFragment : Fragment() {
                 }
             }
         }
-
     }
+
     private fun loadCategoriesFromFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val dbRef = FirebaseDatabase.getInstance()
@@ -265,13 +297,32 @@ class CreateTransactionFragment : Fragment() {
                 categoryName?.let { categoryList.add(it) }
             }
 
-            val adapter = if (categoryList.isNotEmpty()) {
-                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categoryList)
+            if (categoryList.isNotEmpty()) {
+                val categoryOptions = listOf("Select") + categoryList
+                val categoryAdapter = object : ArrayAdapter<String>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    categoryOptions
+                ) {
+                    override fun isEnabled(position: Int) = position != 0
+                    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getDropDownView(position, convertView, parent)
+                        (view as TextView).setTextColor(
+                            if (position == 0) android.graphics.Color.GRAY else android.graphics.Color.BLACK
+                        )
+                        return view
+                    }
+                }
+                categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spCategory.adapter = categoryAdapter
             } else {
-                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, listOf("No categories available"))
+                spCategory.adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    listOf("No categories available")
+                )
             }
 
-            spCategory.adapter = adapter
         }.addOnFailureListener {
             Toast.makeText(requireContext(), "Failed to load categories", Toast.LENGTH_SHORT).show()
         }
@@ -279,7 +330,7 @@ class CreateTransactionFragment : Fragment() {
 
     private fun saveTransaction() {
         val title = etTitle.text.toString().trim()
-        val type = spType.selectedItem?.toString() ?: ""
+        val type = spType.selectedItem?.toString() ?: "Select type"
         val amount = etAmount.text.toString().toDoubleOrNull() ?: 0.0
         val category = spCategory.selectedItem?.toString() ?: ""
         val payment = spPayment.selectedItem?.toString() ?: ""
@@ -306,22 +357,73 @@ class CreateTransactionFragment : Fragment() {
             imagePath = imageUri?.toString()
         )
 
-
-
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid == null) {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val dbRef = FirebaseDatabase.getInstance()
-            .getReference("users")
-            .child(uid)
-            .child("transactions")
+        val userRef = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
-        val newTransactionId = dbRef.push().key
+        // 🔍 Check for budget if type is Expense
+        if (type == "Expense") {
+            userRef.child("budgets").orderByChild("category").equalTo(category)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(budgetSnapshot: DataSnapshot) {
+                        if (budgetSnapshot.exists()) {
+                            val budgetAmount = budgetSnapshot.children.first()
+                                .child("amount").getValue(Int::class.java) ?: 0
+
+                            // Get total spent in this category
+                            userRef.child("transactions").orderByChild("category").equalTo(category)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(transactionSnapshot: DataSnapshot) {
+                                        var totalSpent = 0.0
+                                        for (txn in transactionSnapshot.children) {
+                                            val txnType = txn.child("type").getValue(String::class.java)
+                                            val txnAmount = txn.child("amount").getValue(Double::class.java) ?: 0.0
+                                            if (txnType == "Expense") {
+                                                totalSpent += txnAmount
+                                            }
+                                        }
+
+                                        val newTotal = totalSpent + amount
+                                        if (newTotal > budgetAmount) {
+                                            Toast.makeText(requireContext(),
+                                                "⚠️ This transaction will exceed your budget of R$budgetAmount for '$category'. Total after this: R$newTotal",
+                                                Toast.LENGTH_LONG).show()
+                                            // Optionally return to block save:
+                                            // return
+                                        }
+
+                                        // Proceed to save transaction
+                                        saveTransactionToFirebase(userRef, transaction)
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Toast.makeText(requireContext(), "Error checking transactions", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                        } else {
+                            // No budget set — just save the transaction
+                            saveTransactionToFirebase(userRef, transaction)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(requireContext(), "Error checking budget", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        } else {
+            // Not an expense — just save it
+            saveTransactionToFirebase(userRef, transaction)
+        }
+    }
+
+    private fun saveTransactionToFirebase(userRef: DatabaseReference, transaction: Expense) {
+        val newTransactionId = userRef.child("transactions").push().key
         if (newTransactionId != null) {
-            dbRef.child(newTransactionId).setValue(transaction)
+            userRef.child("transactions").child(newTransactionId).setValue(transaction)
                 .addOnSuccessListener {
                     Toast.makeText(requireContext(), "Transaction saved", Toast.LENGTH_SHORT).show()
                     clearForm()
@@ -331,6 +433,7 @@ class CreateTransactionFragment : Fragment() {
                 }
         }
     }
+
 
     private fun showDatePicker(target: EditText) {
         val cal = Calendar.getInstance()
@@ -366,42 +469,38 @@ class CreateTransactionFragment : Fragment() {
             .setTitle("Add Image")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> takePhoto()
-                    1 -> pickFromGallery()
+                    0 -> takePhotoFromCamera()
+                    1 -> galleryLauncher.launch("image/*")
                 }
-            }.show()
+            }
+            .show()
     }
 
-    private fun pickFromGallery() {
-        galleryLauncher.launch("image/*")
-    }
-
-    private fun takePhoto() {
-        val photoFile = createImageFile()
-        photoFile?.let {
-            imageUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.fileprovider",
-                it
-            )
-            cameraLauncher.launch(imageUri)
-        }
+    private fun takePhotoFromCamera() {
+        val photoFile = createImageFile() ?: return
+        imageUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            photoFile
+        )
+        cameraLauncher.launch(imageUri)
     }
 
     private fun createImageFile(): File? {
         return try {
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val storageDir = File(requireContext().filesDir, "transaction_images")
-            if (!storageDir.exists()) storageDir.mkdirs()
-            File.createTempFile("IMG_$timestamp", ".jpg", storageDir)
+            val fileName = "JPEG_$timestamp"
+            val storageDir = requireContext().cacheDir
+            File.createTempFile(fileName, ".jpg", storageDir)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Toast.makeText(requireContext(), "Failed to create image file", Toast.LENGTH_SHORT).show()
             null
         }
     }
 
+
     private fun clearForm() {
-        etTitle.text?.clear()
+        etTitle.text.clear()
         etAmount.text.clear()
         etDate.text.clear()
         etStartTime.text.clear()

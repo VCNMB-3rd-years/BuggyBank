@@ -18,10 +18,9 @@
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/txtCategoriesHeading"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.589" />
+        app:layout_constraintVertical_bias="0.472" />
 
     <ScrollView
         android:id="@+id/scrollCategoryButtons"
@@ -53,7 +52,7 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/txtHeadingChange"
         app:layout_constraintEnd_toEndOf="parent"
-
+app:layout_constraintTop_toBottomOf="@+id/scrollCategoryButtons"
         app:layout_constraintHorizontal_bias="0.118"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -161,7 +160,8 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/txtAddCategoriesHeading"
+        app:layout_constraintBottom_toTopOf="@+id/scrollCategoryButtons"
+        app:layout_constraintTop_toBottomOf="@+id/txtSetBudget"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

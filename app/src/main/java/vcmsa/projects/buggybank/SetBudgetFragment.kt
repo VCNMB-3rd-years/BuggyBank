@@ -72,15 +72,25 @@ class SetBudgetFragment : Fragment() {
             .child(userId)
             .child("categories")
 
-
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 layoutCategoryButtons.removeAllViews()
+
+                // Create a list to hold categories temporarily
+                val categories = mutableListOf<Triple<String, String, String>>() // (id, name, type)
+
                 for (categorySnapshot in snapshot.children) {
                     val categoryId = categorySnapshot.key ?: continue
                     val categoryName = categorySnapshot.child("name").getValue(String::class.java) ?: continue
                     val categoryType = categorySnapshot.child("type").getValue(String::class.java) ?: "Expense"
+                    categories.add(Triple(categoryId, categoryName, categoryType))
+                }
 
+                // Sort categories by name alphabetically (case-insensitive)
+                categories.sortBy { it.second.lowercase() }
+
+                // Add buttons for sorted categories
+                for ((categoryId, categoryName, categoryType) in categories) {
                     val button = Button(requireContext())
                     button.text = categoryName
                     button.layoutParams = LinearLayout.LayoutParams(
@@ -90,18 +100,12 @@ class SetBudgetFragment : Fragment() {
                         setMargins(8, 8, 8, 8)
                     }
 
-                    var lastSelectedButton: Button? = null
                     button.setOnClickListener {
                         selectedCategoryId = categoryId
                         selectedCategoryName = categoryName
                         selectedCategoryType = categoryType
                         txtSelectedCategory.text = categoryName
                     }
-
-                    // Visual feedback
-                    lastSelectedButton?.setBackgroundResource(android.R.drawable.btn_default)
-                    button.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_200))
-                    lastSelectedButton = button
 
                     layoutCategoryButtons.addView(button)
                 }
@@ -112,6 +116,7 @@ class SetBudgetFragment : Fragment() {
             }
         })
     }
+
 
     private fun saveBudgetToFirebase() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
